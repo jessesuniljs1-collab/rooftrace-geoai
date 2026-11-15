@@ -10,6 +10,7 @@ their bounding boxes on the original image, and exports an annotated PNG and
 structured CSV. Every analysis runs the actual building-specific neural network.
 
 - [Public source repository](https://github.com/jessesuniljs1-collab/rooftrace-geoai)
+- [Live public application](https://rooftrace-geoai.vercel.app)
 - Live URL and verified submission answers: [`docs/PHASE1_SUBMISSION.md`](docs/PHASE1_SUBMISSION.md)
 - [Model artifact and conversion manifest](https://github.com/jessesuniljs1-collab/rooftrace-geoai/releases/tag/model-v1)
 
@@ -205,7 +206,7 @@ greedy one-to-one **mask IoU ≥ 0.50** region matching measured:
 | Region recall | 87.88% (145 / 165) |
 | Mean absolute region-count error per tile | 1.17 |
 | Pixel precision / recall | 94.80% / 93.35% |
-| Median warm 512×512 inference | See machine-readable report; approximately 0.7 seconds on local CPU, 2 threads |
+| Median warm 512×512 inference | 0.639 seconds on local CPU, 2 threads |
 
 The first six lexicographic WHU test tiles were selected before inference. Threshold
 0.50 is a conventional fixed default, **not validation-fitted**. No training or

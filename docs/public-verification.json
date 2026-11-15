@@ -1,0 +1,91 @@
+{
+  "verified_at_ist": "2026-11-16T00:45:14.046715+05:30",
+  "base_url": "https://rooftrace-geoai.vercel.app",
+  "no_authentication_sent": true,
+  "health": {
+    "status": "ok",
+    "model": "whu-unetplusplus-efficientnet-b4-09df9efd-onnx17",
+    "runtime": "ONNX Runtime CPU",
+    "version": "1.0.0"
+  },
+  "checks": [
+    {
+      "check": "public home, no login",
+      "status": 200
+    },
+    {
+      "check": "health",
+      "status": 200
+    },
+    {
+      "check": "samples",
+      "status": 200
+    },
+    {
+      "check": "inference: courtyard",
+      "status": 200
+    },
+    {
+      "check": "inference: neighborhood",
+      "status": 200
+    },
+    {
+      "check": "inference: farmland",
+      "status": 200
+    },
+    {
+      "check": "inference: phoenix",
+      "status": 200
+    },
+    {
+      "check": "uploaded PNG inference",
+      "status": 200
+    },
+    {
+      "check": "threshold filtering",
+      "status": 200
+    },
+    {
+      "check": "uploaded JPG zero regions",
+      "status": 200
+    },
+    {
+      "check": "corrupt image rejected",
+      "status": 422
+    },
+    {
+      "check": "oversized upload rejected",
+      "status": 413
+    },
+    {
+      "check": "public repository API",
+      "status": 200
+    }
+  ],
+  "sample_results": {
+    "courtyard": {
+      "count": 26,
+      "model_seconds": 4.404,
+      "wall_seconds": 5.355
+    },
+    "neighborhood": {
+      "count": 56,
+      "model_seconds": 2.182,
+      "wall_seconds": 2.955
+    },
+    "farmland": {
+      "count": 1,
+      "model_seconds": 2.186,
+      "wall_seconds": 2.725
+    },
+    "phoenix": {
+      "count": 13,
+      "model_seconds": 2.079,
+      "wall_seconds": 2.577
+    }
+  },
+  "filtered_threshold": 0.7,
+  "filtered_count": 28,
+  "public_repository": "https://github.com/jessesuniljs1-collab/rooftrace-geoai",
+  "repository_private": false
+}
