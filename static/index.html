@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="RoofTrace turns overhead images into estimated building regions with transparent AI results and downloadable annotations.">
+  <meta name="theme-color" content="#123c32"><title>RoofTrace · Building intelligence</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/styles.css"><script src="/static/app.js" type="module"></script>
+</head>
+<body>
+<a class="skip-link" href="#workspace">Skip to analysis</a>
+<header class="header"><a class="brand" href="/" aria-label="RoofTrace home"><svg viewBox="0 0 36 36" aria-hidden="true"><path d="M5 17 18 6l13 11M9 15v15h18V15M14 30V19h8v11"/></svg><span>RoofTrace<span class="brand-dot">.</span></span></a><div class="header-right"><span class="edition">IEEE WEEK 2026 <span>GEOAI HACKATHON</span></span><a href="https://github.com/jessesuniljs1-collab/rooftrace-geoai" target="_blank" rel="noreferrer">Source code ↗</a></div></header>
+<main>
+  <section class="intro"><div><p class="eyebrow">SATELLITE IMAGE INTELLIGENCE / PROBLEM 13</p><h1>A closer look at every roof.</h1><p class="subtitle">Turn an overhead image into building regions you can inspect, count and export.</p></div><div class="model-label"><span class="status-dot"></span> Building-specific AI<span>UNet++ · RGB aerial imagery</span></div></section>
+  <div class="workspace" id="workspace">
+    <aside class="source-panel" aria-label="Image source and analysis controls">
+      <div class="section-heading"><span class="step">01</span><h2>Choose your image</h2></div>
+      <label class="upload-zone" id="drop-zone" for="upload"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 21V5m-6 6 6-6 6 6M6 21v6h20v-6"/></svg><strong>Upload overhead imagery</strong><span>Choose a file or drop it here</span><small>JPG or PNG · up to 3.5 MB<br>64–1024 px on each side</small><input id="upload" type="file" accept="image/jpeg,image/png"></label>
+      <div class="divider"><span>or explore a sample</span></div>
+      <div id="samples" class="samples" aria-label="Sample images"><p>Loading sample imagery…</p></div>
+      <p class="source-credit" id="source-credit"></p>
+      <button id="analyze" class="primary" disabled>Analyze image <span aria-hidden="true">↗</span></button>
+      <p class="privacy">Uploads are processed in memory and discarded. No account required.</p>
+      <button id="reset" class="text-button">Reset workspace</button>
+    </aside>
+    <section class="analysis-panel" aria-label="Image viewer and results">
+      <div class="viewer-toolbar"><div><span class="step">02</span><h2 id="image-title">Image workspace</h2></div><div class="view-switch" role="group" aria-label="Image view"><button id="view-original" aria-pressed="true">Original</button><button id="view-annotated" aria-pressed="false" disabled>Annotated</button></div></div>
+      <div class="viewer" id="viewer"><div id="empty-view" class="empty-view"><span aria-hidden="true">⌖</span><p>Your image belongs here.</p><small>Choose a sample or upload a high-resolution overhead image.</small></div><canvas id="image-canvas" hidden role="img" aria-label="Selected overhead image"></canvas><div class="viewer-badge" id="viewer-badge" hidden></div><div class="loading" id="loading" hidden><div class="spinner"></div><strong id="loading-title">Tracing building regions…</strong><span id="elapsed">Starting inference</span><small>First analysis may take longer while the model starts.</small></div></div>
+      <div class="image-meta"><span id="dimensions">No image selected</span><span id="run-meta">RGB imagery · original pixel coordinates</span></div>
+      <div id="message" class="message" role="status" aria-live="polite">Choose an image, then start analysis. Every result is computed by the model.</div>
+      <div id="error" class="error" role="alert" hidden></div>
+      <div class="results" id="results" hidden>
+        <div class="result-summary"><div><p class="eyebrow">ESTIMATED BUILDING REGIONS</p><div class="count-line"><strong id="count">0</strong><span>connected regions<br><small>Review against the image</small></span></div></div><div class="threshold-control"><div><label for="threshold">Building probability threshold</label><output for="threshold" id="threshold-value">0.50</output></div><input id="threshold" type="range" min="0.1" max="0.9" step="0.05" value="0.5"><div class="range-ends"><span>More inclusive</span><span>More selective</span></div><small id="active-threshold">Active threshold: 0.50</small></div></div>
+        <p class="interpretation">The model segments building pixels. Boxes enclose connected regions of at least 16 pixels. Adjoining roofs can merge, and one roof can fragment. Scores are mean pixel probabilities, not calibrated object confidence. Counts may rise or fall as the threshold changes.</p>
+        <div class="export-bar"><label class="check"><input id="show-ids" type="checkbox" checked> Show region IDs</label><div><button id="download-png" class="secondary">↓ Annotated PNG</button><button id="download-csv" class="secondary">↓ Results CSV</button></div></div>
+        <details class="region-details"><summary>Inspect region coordinates & scores <span id="table-count"></span></summary><p>Pixels from the top-left of the EXIF-oriented image. Bounds are [x_min, x_max) and [y_min, y_max), with exclusive right and bottom edges.</p><div class="table-scroll"><table><thead><tr><th>Region</th><th>Bounds (x₁, y₁, x₂, y₂)</th><th>Area (px)</th><th>Mean probability</th></tr></thead><tbody id="region-table"></tbody></table></div><small>Showing up to 100 regions. The CSV contains every active region. A zero result exports a header-only CSV.</small></details>
+      </div>
+    </section>
+  </div>
+  <section class="notes" aria-label="Method and limitations"><div><p class="eyebrow">BUILT FOR A FIRST PASS</p><h2>Visible results. Clear boundaries.</h2><p>RoofTrace helps you review visible building regions. It is an experimental mapping aid, with no claim of survey accuracy.</p></div><div><h3>What the model sees</h3><p>A building-specific UNet++ / EfficientNet-B4 model trained on WHU RGB aerial images at 0.3 m per pixel. Fresh CPU inference runs on every analysis, with 512 px overlapping tiles for larger images.</p><h3>Where it can miss</h3><p>Resolution, viewing angle, trees, shadows and adjoining roofs affect results. Low-resolution imagery may produce substantial errors. PNG/JPG files carry no reliable geographic scale, so exported coordinates are pixels, not map locations.</p></div><div><h3>Sources & attribution</h3><p>Three WHU test images are provided for research demonstration under the hosted release’s CC BY 4.0 terms. The Phoenix sample uses public-domain USDA/USGS imagery and demonstrates transfer limitations.</p><p><a href="https://huggingface.co/giswqs/whu-building-unetplusplus-efficientnet-b4" target="_blank" rel="noreferrer">Model & Apache 2.0 license ↗</a><br><a href="https://huggingface.co/datasets/giswqs/WHU-Building-Dataset" target="_blank" rel="noreferrer">WHU dataset · Ji, Wei & Lu (2019) ↗</a><br><a href="https://github.com/jessesuniljs1-collab/rooftrace-geoai/blob/main/THIRD_PARTY_NOTICES.md" target="_blank" rel="noreferrer">Full provenance, evaluation & terms ↗</a></p></div></section>
+</main>
+<footer><span class="footer-brand">RoofTrace.</span><p>404: JCT Not Found <span>Jesse Sunil · Charan SC · SM Tejashree Kashyap</span></p><span>PHASE 1 / 2026</span></footer>
+</body></html>

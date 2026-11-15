@@ -1,0 +1,74 @@
+[
+  {
+    "id": "courtyard",
+    "title": "Courtyard housing",
+    "description": "Adjoining roofs and a central courtyard",
+    "image": "/static/samples/courtyard.png",
+    "width": 512,
+    "height": 512,
+    "ground_pixel_size_m": 0.3,
+    "source": "WHU Building Dataset / Ji, Wei & Lu (2019), hosted by giswqs",
+    "source_url": "https://huggingface.co/datasets/giswqs/WHU-Building-Dataset/resolve/c9ccc03ef4dd004b63cf179835771ab5e074bd3d/test/Image/test_0002.png",
+    "split": "test",
+    "original_file": "test_0002.png",
+    "license": "CC BY 4.0 per the hosted dataset release; research demonstration",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "sha256": "7d7004355ef090bab8fc7baf4d01cd9596b793385310bd69f2785eb0ed3f09ff"
+  },
+  {
+    "id": "neighborhood",
+    "title": "Leafy neighborhood",
+    "description": "Detached homes, shadows and varied roofs",
+    "image": "/static/samples/neighborhood.png",
+    "width": 512,
+    "height": 512,
+    "ground_pixel_size_m": 0.3,
+    "source": "WHU Building Dataset / Ji, Wei & Lu (2019), hosted by giswqs",
+    "source_url": "https://huggingface.co/datasets/giswqs/WHU-Building-Dataset/resolve/c9ccc03ef4dd004b63cf179835771ab5e074bd3d/test/Image/test_0006.png",
+    "split": "test",
+    "original_file": "test_0006.png",
+    "license": "CC BY 4.0 per the hosted dataset release; research demonstration",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "sha256": "da40fbf2b20c23d7691ded5b7eecdbe79a8de8871120ccbd00eb1cc6a0b8c599"
+  },
+  {
+    "id": "farmland",
+    "title": "Fields & roadside",
+    "description": "Mostly vegetation with a roof at the image edge",
+    "image": "/static/samples/farmland.png",
+    "width": 512,
+    "height": 512,
+    "ground_pixel_size_m": 0.3,
+    "source": "WHU Building Dataset / Ji, Wei & Lu (2019), hosted by giswqs",
+    "source_url": "https://huggingface.co/datasets/giswqs/WHU-Building-Dataset/resolve/c9ccc03ef4dd004b63cf179835771ab5e074bd3d/test/Image/test_0003.png",
+    "split": "test",
+    "original_file": "test_0003.png",
+    "license": "CC BY 4.0 per the hosted dataset release; research demonstration",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "sha256": "741b82b9b936d144ab8768eec70442594e7149226c57e5a443c290ff9029432a"
+  },
+  {
+    "id": "phoenix",
+    "title": "Phoenix mixed blocks",
+    "description": "Larger buildings beside smaller homes",
+    "image": "/static/samples/phoenix.png",
+    "width": 512,
+    "height": 512,
+    "center_lon_lat": [
+      -112.067,
+      33.47
+    ],
+    "bbox_3857": [
+      -12475333.441775076,
+      3957763.9975125366,
+      -12475149.3076845,
+      3957948.131603111
+    ],
+    "requested_ground_pixel_size_m": 0.3,
+    "note": "Service resampling; native imagery resolution varies, typically 1 m. Acquisition year is not asserted.",
+    "source": "USDA / USGS The National Map: Orthoimagery",
+    "source_url": "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/export?bbox=-12475333.441775076%2C3957763.9975125366%2C-12475149.3076845%2C3957948.131603111&bboxSR=3857&imageSR=3857&size=512%2C512&format=png&transparent=false&f=image",
+    "license": "Public domain",
+    "sha256": "724591eb50ced4f2f85d8f11a0d3c649628b1f32cfb4312ec28d18d6ffd818b6"
+  }
+]

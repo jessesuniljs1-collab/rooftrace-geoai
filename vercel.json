@@ -1,0 +1,6 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "fastapi",
+  "buildCommand": "python3 scripts/download_model.py",
+  "functions": {"app.py": {"maxDuration": 120, "excludeFiles": "{private,tests,docs,.github}/**"}}
+}

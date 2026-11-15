@@ -1,0 +1,11 @@
+.git
+.venv
+private
+__pycache__
+.pytest_cache
+.ruff_cache
+models/model.pth
+models/*.onnx
+docs
+tests
+node_modules

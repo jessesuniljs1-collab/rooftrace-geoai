@@ -1,0 +1,19 @@
+{
+  "model_id": "giswqs/whu-building-unetplusplus-efficientnet-b4",
+  "revision": "09df9efd323bbd3d56b98b4857129eb9b5baa2d3",
+  "license": "Apache-2.0",
+  "architecture": "UNet++ / EfficientNet-B4",
+  "input_shape": [
+    1,
+    3,
+    512,
+    512
+  ],
+  "normalization": "RGB float32 / 255, no mean/std normalization",
+  "output": "two-class logits: background=0, building=1",
+  "checkpoint_sha256": "922af7c96c0dc44256ab8b4d1a071f2151e0a921c997af80b55bb766bcc30dc6",
+  "onnx_sha256": "cfdea7ed40336f16b118dabf633d086ce18e90c975e90038bb88c369da05a0b3",
+  "onnx_bytes": 80031750,
+  "opset": 17,
+  "export_max_absolute_error": 1.239776611328125e-05
+}

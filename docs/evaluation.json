@@ -1,0 +1,106 @@
+{
+  "dataset": "giswqs/WHU-Building-Dataset",
+  "revision": "c9ccc03ef4dd004b63cf179835771ab5e074bd3d",
+  "split": "test",
+  "selection": "First six lexicographic test tiles, chosen before inference; no threshold fitting",
+  "probability_threshold": 0.5,
+  "min_component_area_pixels": 16,
+  "matching": "8-connected regions from both masks, greedy one-to-one mask IoU >= 0.50",
+  "precision": 0.8734939759036144,
+  "recall": 0.8787878787878788,
+  "mean_absolute_count_error": 1.1666666666666667,
+  "pixel_precision": 0.9480283521676222,
+  "pixel_recall": 0.9335326835813789,
+  "median_warm_inference_seconds": 0.7135,
+  "hardware": {
+    "system": "Windows-11-10.0.26200-SP0",
+    "processor": "AMD64 Family 25 Model 116 Stepping 1, AuthenticAMD",
+    "runtime": "ONNX Runtime 1.20.1 CPU, 2 threads"
+  },
+  "caution": "Six related tiles only, not a geographically broad benchmark. Provider-declared test split; independence not independently audited. Counts refer to connected regions, including reference labels, not cadastral instances. USGS samples are a separate geography and resolution without reference labels.",
+  "true_positive": 145,
+  "false_positive": 21,
+  "false_negative": 20,
+  "rows": [
+    {
+      "image": "test_0001.png",
+      "true_positive": 0,
+      "false_positive": 0,
+      "false_negative": 0,
+      "predicted_regions": 0,
+      "reference_regions": 0,
+      "inference_seconds": 0.719,
+      "tiles": 1
+    },
+    {
+      "image": "test_0002.png",
+      "true_positive": 21,
+      "false_positive": 5,
+      "false_negative": 5,
+      "predicted_regions": 26,
+      "reference_regions": 26,
+      "inference_seconds": 0.709,
+      "tiles": 1
+    },
+    {
+      "image": "test_0003.png",
+      "true_positive": 1,
+      "false_positive": 0,
+      "false_negative": 0,
+      "predicted_regions": 1,
+      "reference_regions": 1,
+      "inference_seconds": 0.715,
+      "tiles": 1
+    },
+    {
+      "image": "test_0004.png",
+      "true_positive": 36,
+      "false_positive": 4,
+      "false_negative": 6,
+      "predicted_regions": 40,
+      "reference_regions": 42,
+      "inference_seconds": 0.715,
+      "tiles": 1
+    },
+    {
+      "image": "test_0005.png",
+      "true_positive": 35,
+      "false_positive": 8,
+      "false_negative": 4,
+      "predicted_regions": 43,
+      "reference_regions": 39,
+      "inference_seconds": 0.712,
+      "tiles": 1
+    },
+    {
+      "image": "test_0006.png",
+      "true_positive": 52,
+      "false_positive": 4,
+      "false_negative": 5,
+      "predicted_regions": 56,
+      "reference_regions": 57,
+      "inference_seconds": 0.711,
+      "tiles": 1
+    }
+  ],
+  "public_sample_smoke": [
+    {
+      "image": "las-vegas.png",
+      "count": 11,
+      "inference_seconds": 1.0,
+      "tiles": 1
+    },
+    {
+      "image": "phoenix.png",
+      "count": 13,
+      "inference_seconds": 0.716,
+      "tiles": 1
+    },
+    {
+      "image": "sacramento.png",
+      "count": 0,
+      "inference_seconds": 0.712,
+      "tiles": 1
+    }
+  ]
+}
