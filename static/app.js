@@ -1,5 +1,5 @@
 const $ = (id) => document.getElementById(id);
-const state = { source: null, result: null, view: 'original', epoch: 0, filtering: 0, busy: false, url: null, controller: null, timer: null };
+const state = { source: null, result: null, view: 'original', epoch: 0, filtering: 0, busy: false, pending: false, url: null, controller: null, timer: null };
 const canvas = $('image-canvas');
 const ctx = canvas.getContext('2d');
 let samples = [];
@@ -32,6 +32,7 @@ function stopWork() {
   state.epoch++;
   state.filtering++;
   state.busy = false;
+  state.pending = false;
   $('loading').hidden = true;
   $('viewer').setAttribute('aria-busy', 'false');
 }
@@ -88,7 +89,7 @@ function renderResults() {
     row.append(cell); $('region-table').append(row);
   }
   renderImage();
-  downloads(false);
+  downloads(state.pending);
 }
 async function loadImage(url) {
   const image = new Image();
@@ -179,11 +180,12 @@ async function applyThreshold() {
     const response = await fetch('/api/regions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ probability_png: state.result.probability_png, threshold }) });
     const update = await readResponse(response);
     if (state.epoch !== epoch || serial !== state.filtering) return;
-    Object.assign(state.result, update); renderResults();
+    Object.assign(state.result, update); state.pending = false; renderResults();
     status(update.count ? 'Threshold applied. The viewer, count and downloads now use the active threshold.' : 'No regions at this threshold. A zero estimate can include missed buildings.');
   } catch (e) {
     if (state.epoch !== epoch || serial !== state.filtering) return;
     $('threshold').value = state.result.threshold;
+    state.pending = false;
     renderResults(); error(`${e.message} The previous threshold remains active.`);
   }
 }
@@ -213,12 +215,13 @@ for (const view of ['original', 'annotated']) $(`view-${view}`).addEventListener
 $('show-ids').addEventListener('change', () => renderImage());
 $('threshold').addEventListener('input', () => {
   $('threshold-value').textContent = Number($('threshold').value).toFixed(2);
-  downloads(true); state.filtering++; clearTimeout(filterTimer); filterTimer = setTimeout(applyThreshold, 200);
+  state.pending = true; downloads(true); state.filtering++; clearTimeout(filterTimer); filterTimer = setTimeout(applyThreshold, 200);
 });
 $('download-png').addEventListener('click', () => {
   if (!state.result) return;
+  const filename = `rooftrace-${state.result.image_id}-p${Number(state.result.threshold).toFixed(2)}.png`;
   const output = document.createElement('canvas'); renderImage(output, true);
-  output.toBlob((blob) => { if (blob) download(blob, `rooftrace-${state.result.image_id}-p${Number(state.result.threshold).toFixed(2)}.png`); }, 'image/png');
+  output.toBlob((blob) => { if (blob) download(blob, filename); }, 'image/png');
 });
 $('download-csv').addEventListener('click', downloadCSV);
 $('reset').addEventListener('click', () => {

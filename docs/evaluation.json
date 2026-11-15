@@ -11,7 +11,7 @@
   "mean_absolute_count_error": 1.1666666666666667,
   "pixel_precision": 0.9480283521676222,
   "pixel_recall": 0.9335326835813789,
-  "median_warm_inference_seconds": 0.7135,
+  "median_warm_inference_seconds": 0.6385000000000001,
   "hardware": {
     "system": "Windows-11-10.0.26200-SP0",
     "processor": "AMD64 Family 25 Model 116 Stepping 1, AuthenticAMD",
@@ -29,7 +29,7 @@
       "false_negative": 0,
       "predicted_regions": 0,
       "reference_regions": 0,
-      "inference_seconds": 0.719,
+      "inference_seconds": 0.668,
       "tiles": 1
     },
     {
@@ -39,7 +39,7 @@
       "false_negative": 5,
       "predicted_regions": 26,
       "reference_regions": 26,
-      "inference_seconds": 0.709,
+      "inference_seconds": 0.649,
       "tiles": 1
     },
     {
@@ -49,7 +49,7 @@
       "false_negative": 0,
       "predicted_regions": 1,
       "reference_regions": 1,
-      "inference_seconds": 0.715,
+      "inference_seconds": 0.625,
       "tiles": 1
     },
     {
@@ -59,7 +59,7 @@
       "false_negative": 6,
       "predicted_regions": 40,
       "reference_regions": 42,
-      "inference_seconds": 0.715,
+      "inference_seconds": 0.628,
       "tiles": 1
     },
     {
@@ -69,7 +69,7 @@
       "false_negative": 4,
       "predicted_regions": 43,
       "reference_regions": 39,
-      "inference_seconds": 0.712,
+      "inference_seconds": 0.625,
       "tiles": 1
     },
     {
@@ -79,27 +79,33 @@
       "false_negative": 5,
       "predicted_regions": 56,
       "reference_regions": 57,
-      "inference_seconds": 0.711,
+      "inference_seconds": 0.674,
       "tiles": 1
     }
   ],
   "public_sample_smoke": [
     {
-      "image": "las-vegas.png",
-      "count": 11,
-      "inference_seconds": 1.0,
+      "image": "courtyard.png",
+      "count": 26,
+      "inference_seconds": 0.843,
+      "tiles": 1
+    },
+    {
+      "image": "farmland.png",
+      "count": 1,
+      "inference_seconds": 0.683,
+      "tiles": 1
+    },
+    {
+      "image": "neighborhood.png",
+      "count": 56,
+      "inference_seconds": 0.654,
       "tiles": 1
     },
     {
       "image": "phoenix.png",
       "count": 13,
-      "inference_seconds": 0.716,
-      "tiles": 1
-    },
-    {
-      "image": "sacramento.png",
-      "count": 0,
-      "inference_seconds": 0.712,
+      "inference_seconds": 0.664,
       "tiles": 1
     }
   ]
