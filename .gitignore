@@ -13,3 +13,11 @@ private/
 *.log
 node_modules/
 .DS_Store
+*.pem
+*.key
+.netrc
+.npmrc
+.pypirc
+auth.json
+credentials*.json
+service-account*.json

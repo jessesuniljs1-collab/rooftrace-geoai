@@ -175,6 +175,18 @@ are not written to disk or logged, and no user result database exists. Probabili
 maps remain in browser memory for filtering and are cleared by reset/navigation.
 Image requests are `no-store`; the host can still retain ordinary access metadata.
 
+### Credential protection
+
+The application uses **no OpenAI, Vercel, Hugging Face or other API key**. Hosting
+and Git CLI authentication stays outside application source. No Vercel project
+environment variables or GitHub repository Actions secrets are configured. `.env`,
+local hosting metadata, key files and common credential files are ignored.
+The initial full-history Gitleaks audit, supplemental deployed-asset/CI-log scan,
+and private-route checks found **zero exposed credentials**. See
+[`docs/security-audit.json`](docs/security-audit.json). GitHub Actions scans the
+full history with checksum-verified Gitleaks 8.30.1 and redacts any findings.
+Pattern-based scanning cannot prove the absence of every possible secret format.
+
 JPG/PNG lack reliable georeferencing or ground scale. No GIS coordinates, cadastral
 accuracy, building completeness, or worldwide generalization is claimed. Resolution,
 obliquity, occlusion, tree cover and shadows can materially alter results. Free

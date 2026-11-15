@@ -87,6 +87,16 @@ third-party assets, not original ownership of the pretrained model or datasets.
   was unavailable with the current integration permissions. This does not affect
   the working deployment or CI. Redeploy source changes with the authenticated
   Vercel CLI; the setup and model acquisition are in version control.
+- **Credentials:** Gitleaks 8.30.1 scanned the full Git history with zero findings;
+  supplemental source, deployed-asset and completed-CI-log checks found no exposed
+  keys. Vercel has no project environment variables, and GitHub has no repository
+  Actions secrets configured. Sensitive-file URL probes return 404. The app needs
+  no OpenAI, Vercel or Hugging Face API keys. Full-history secret scanning is now
+  part of CI, with findings redacted. See `security-audit.json`.
+
+![Public RoofTrace desktop result](rooftrace-desktop.jpg)
+
+![Public RoofTrace phone layout](rooftrace-mobile.jpg)
 
 ## Material limitations
 

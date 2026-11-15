@@ -122,6 +122,7 @@ async function selectSource(sample, file) {
   } catch (e) {
     if (state.epoch !== epoch) return;
     error(e.message || 'The image could not be opened. Try a valid JPG or PNG.');
+    status('No image loaded. Choose a valid JPG or PNG to continue.');
     canvas.hidden = true; $('empty-view').hidden = false;
     $('dimensions').textContent = 'No image selected'; $('image-title').textContent = 'Image workspace';
     $('source-credit').textContent = '';
