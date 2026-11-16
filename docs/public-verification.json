@@ -1,5 +1,5 @@
 {
-  "verified_at_ist": "2026-11-16T12:10:08.166210+05:30",
+  "verified_at_ist": "2026-11-16T12:14:59.035752+05:30",
   "base_url": "https://rooftrace-geoai.vercel.app",
   "no_authentication_sent": true,
   "health": {
@@ -23,15 +23,11 @@
       "status": 200
     },
     {
-      "check": "inference: bengaluru",
+      "check": "inference: neighborhood",
       "status": 200
     },
     {
       "check": "inference: courtyard",
-      "status": 200
-    },
-    {
-      "check": "inference: neighborhood",
       "status": 200
     },
     {
@@ -68,30 +64,25 @@
     }
   ],
   "sample_results": {
-    "bengaluru": {
-      "count": 71,
-      "model_seconds": 18.743,
-      "wall_seconds": 18.992
+    "neighborhood": {
+      "count": 56,
+      "model_seconds": 2.382,
+      "wall_seconds": 3.131
     },
     "courtyard": {
       "count": 26,
-      "model_seconds": 2.053,
-      "wall_seconds": 2.217
-    },
-    "neighborhood": {
-      "count": 56,
-      "model_seconds": 2.029,
-      "wall_seconds": 2.182
+      "model_seconds": 2.163,
+      "wall_seconds": 2.898
     },
     "farmland": {
       "count": 1,
-      "model_seconds": 2.044,
-      "wall_seconds": 2.19
+      "model_seconds": 2.213,
+      "wall_seconds": 2.518
     },
     "phoenix": {
       "count": 13,
-      "model_seconds": 2.026,
-      "wall_seconds": 2.269
+      "model_seconds": 2.145,
+      "wall_seconds": 2.678
     }
   },
   "filtered_threshold": 0.7,

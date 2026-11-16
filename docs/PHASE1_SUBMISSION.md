@@ -19,7 +19,7 @@ Problem 13 — Satellite Image Intelligence
 
 **Project Title**
 
-RoofTrace Solar — Rooftop Solar Potential from Overhead Imagery
+RoofTrace — Building Detection from Satellite Imagery
 
 **Live Deployed Application Link**
 
@@ -50,8 +50,8 @@ of those assets or validated installation suitability. AI coding assistance was 
 
 The checkbox is supported for that actual scope. Do not describe this as Google-image
 analysis, a Google Sunroof product, or a validated engineering design. The team chose
-no Google billing. The proposed title reflects the new scope; submit it only if the
-hackathon permits updating the earlier project title.
+no Google billing. The application is branded RoofTrace Solar; retain the assigned project title above
+for the submission form.
 
 ## Demo guide
 

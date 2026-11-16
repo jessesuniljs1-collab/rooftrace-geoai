@@ -37,7 +37,7 @@ def main():
         assert len(roof["panels"]) == roof["panel_count"]
         for panel in roof["panels"]:
             assert all(0 <= x < detection["width"] and 0 <= y < detection["height"] for x, y in panel)
-    body["settings"]["excluded_region_ids"] = [result["roofs"][0]["id"]]
+    body["settings"]["excluded_region_ids"] = [next(r["id"] for r in result["roofs"] if r["panel_count"] > 0)]
     excluded = session.post(base + "/api/solar", json=body, timeout=120)
     excluded.raise_for_status()
     assert excluded.json()["panel_count"] < result["panel_count"]
