@@ -23,7 +23,7 @@ export function createSolarController({getSource,getResult,redraw,download,canva
     invalidate('Analyze the image, then confirm its scale and solar scenario below.');
     excluded=new Set(); selected='all'; calibration=null;
     $('solar-calibration-note').hidden=true;
-    $('solar-location').value='source';
+    $('solar-location').value='source'; $('solar-settings').open=!sample;
     $('solar-scale').value=sample?.ground_pixel_size_m || sample?.requested_ground_pixel_size_m || '';
     let coordinates=sample?.center_lon_lat;
     if(!coordinates && sample?.split==='test') {
@@ -95,7 +95,7 @@ export function createSolarController({getSource,getResult,redraw,download,canva
   async function calculate(event) {
     event?.preventDefault();
     const detection=getResult(); if(!detection) return;
-    if(!$('solar-form').reportValidity()) return;
+    if(!$('solar-form').checkValidity()) { $('solar-settings').open=true; $('solar-form').reportValidity(); return; }
     version++; const requestVersion=version;
     controller?.abort(); controller=new AbortController(); hideResult(); redraw();
     $('solar-error').hidden=true; $('solar-calculate').disabled=true;
@@ -147,6 +147,7 @@ export function createSolarController({getSource,getResult,redraw,download,canva
     if(hit){selected=String(hit.id);if(result){$('solar-roof').value=selected;inspect();}else{message('Calculating selected roof…');calculate();}}
   });
   $('solar-form').addEventListener('submit',calculate);
+  $('solar-recalculate').addEventListener('click',calculate);
   for(const field of fields) $(`solar-${field}`).addEventListener('input',()=>{invalidate();mapLink();});
   $('solar-location').addEventListener('change',()=>{
     const preset=$('solar-location').value;
