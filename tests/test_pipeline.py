@@ -20,10 +20,10 @@ def image_bytes(size=(512, 512), fmt="PNG"):
 
 
 def test_validation_and_bounds():
-    for data in [b"not an image", image_bytes(fmt="GIF"), image_bytes((1025, 64)), image_bytes((63, 100)), b"x" * 3_500_001]:
+    for data in [b"not an image", image_bytes(fmt="GIF"), image_bytes((2049, 64)), image_bytes((63, 100)), b"x" * 3_500_001]:
         with pytest.raises(ValueError):
             engine.decode_image(data)
-    assert engine.decode_image(image_bytes((700, 900), "JPEG")).size == (700, 900)
+    assert engine.decode_image(image_bytes((1231, 613), "JPEG")).size == (1231, 613)
 
 
 def test_exif_orientation():
@@ -70,7 +70,7 @@ def test_api_rejects_invalid_inputs():
     assert client.post("/api/analyze").status_code == 422
     assert client.post("/api/analyze", data={"sample_id": "../secret"}).status_code == 404
     assert client.post("/api/analyze", files={"file": ("bad.png", b"corrupt", "image/png")}).status_code == 422
-    assert client.post("/api/analyze", files={"file": ("huge.png", image_bytes((1025, 64)), "image/png")}).status_code == 422
+    assert client.post("/api/analyze", files={"file": ("huge.png", image_bytes((2049, 64)), "image/png")}).status_code == 422
     assert client.post("/api/analyze", content=b"a" * 3_600_000).status_code == 413
     assert client.post("/api/regions", json={"probability_png": "bad", "threshold": .5}).status_code == 422
     assert client.post("/api/regions", json={"probability_png": base64.b64encode(image_bytes()).decode(), "threshold": .99}).status_code == 422

@@ -45,6 +45,10 @@ try{
   document.getElementById('solar-form').dispatchEvent(new window.Event('submit',{cancelable:true}));await tick();
   assert.equal(document.getElementById('solar-output').hidden,false);
   assert.match(document.getElementById('solar-total-energy').textContent,/12,000/);
+  const canvas=document.getElementById('image-canvas'); canvas.getBoundingClientRect=()=>({left:0,top:0,width:512,height:512});
+  canvas.dispatchEvent(new window.MouseEvent('click',{clientX:20,clientY:20}));
+  assert.equal(document.getElementById('roof-popover').hidden,false);
+  assert.match(document.getElementById('roof-popover').textContent,/Roof region 1/);
   document.getElementById('solar-download-csv').click();await tick();
   const csv=await downloads.at(-1).blob.text();assert.match(csv,/annual_ac_kwh/);assert.equal(csv.trim().split('\r\n').length,3);
   assert.match(csv,/'?"0.5"/);

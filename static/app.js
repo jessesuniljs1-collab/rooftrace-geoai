@@ -101,7 +101,7 @@ async function loadImage(url) {
   image.src = url;
   await image.decode();
   const { naturalWidth: w, naturalHeight: h } = image;
-  if (Math.min(w, h) < 64 || Math.max(w, h) > 1024 || w * h > 1048576) throw new Error('Use 64–1024 pixels on each side, up to 1,048,576 pixels. Crop larger scenes before uploading.');
+  if (Math.min(w, h) < 64 || Math.max(w, h) > 2048 || w * h > 4194304) throw new Error('Images can be up to 2048 pixels on each side. Please resize larger scenes before uploading.');
   return image;
 }
 async function selectSource(sample, file) {
@@ -167,6 +167,7 @@ async function analyze() {
     $('view-original').setAttribute('aria-pressed', 'false'); $('view-annotated').setAttribute('aria-pressed', 'true');
     $('run-meta').textContent = `${result.inference_seconds.toFixed(2)} s model time · ${result.tiles} ${result.tiles === 1 ? 'tile' : 'tiles'}`;
     renderResults();
+    if (state.source.sample) solarController?.calculate();
     status(result.count ? 'Analysis complete. Inspect the regions, adjust the probability threshold, or download the active results.' : 'Analysis complete: no regions at the active threshold. Review the original image; buildings may have been missed.');
   } catch (e) {
     if (state.epoch !== epoch) return;

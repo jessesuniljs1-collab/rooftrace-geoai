@@ -114,7 +114,7 @@ def analyze(file: UploadFile | None = File(None), sample_id: str | None = Form(N
 
 
 class RegionRequest(BaseModel):
-    probability_png: str = Field(max_length=2_000_000)
+    probability_png: str = Field(max_length=3_400_000)
     threshold: float = Field(ge=0.1, le=0.9)
 
 

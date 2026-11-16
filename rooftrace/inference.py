@@ -16,8 +16,8 @@ from PIL import Image, ImageOps, UnidentifiedImageError
 ROOT = Path(__file__).resolve().parents[1]
 MODEL_ID = "whu-unetplusplus-efficientnet-b4-09df9efd-onnx17"
 MAX_BYTES = 3_500_000
-MAX_PIXELS = 1_048_576
-MAX_SIDE = 1024
+MAX_PIXELS = 4_194_304
+MAX_SIDE = 2048
 MIN_AREA = 16
 TILE = 512
 STRIDE = 384
@@ -36,7 +36,7 @@ def decode_image(data: bytes) -> Image.Image:
                 raise ValueError("Please use a JPG or PNG image.")
             width, height = image.size
             if min(width, height) < 64 or max(width, height) > MAX_SIDE or width * height > MAX_PIXELS:
-                raise ValueError("Use an image between 64 and 1024 pixels on each side, at most 1,048,576 pixels. Crop larger scenes first.")
+                raise ValueError("Use an image between 64 and 2048 pixels on each side. Please resize larger images before uploading.")
             if getattr(image, "n_frames", 1) != 1:
                 raise ValueError("Animated or multi-frame images are not supported.")
             image.load()

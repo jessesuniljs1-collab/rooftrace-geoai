@@ -53,51 +53,15 @@ analysis, a Google Sunroof product, or a validated engineering design. The team 
 no Google billing. The proposed title reflects the new scope; submit it only if the
 hackathon permits updating the earlier project title.
 
-## Handoff
+## Demo guide
 
-The building-specific model and real inference remain in place. India sample:
-DroneMaps.in / Chetan Prasad / Open Imagery Network, Uttari near Bengaluru, acquired
-21 July 2022, CC BY 4.0, georeferenced 0.3 m/pixel crop. Other sources: WHU test
-samples, USGS imagery and PVGIS ERA5 regional yield. Google is visual context only.
+1. Choose Bengaluru rooftops and click Find rooftops.
+2. Solar estimates run automatically. Click each highlighted roof for its own result card.
+3. Explain roof area, panel count, capacity (kWp) and yearly energy (kWh).
+4. Use the monthly chart to show seasonal changes. Export the result if requested.
+5. Advanced assumptions stay available; these are screening estimates requiring site review.
 
-Requested upstream: AKASH2907/project_sunroof_india, Apache-2.0, commit
-`0c6426b9c06aa784cfee2860d3a9965c36d9222e`. Scale/rotation functions are adapted,
-identified and credited; the original license is preserved. Its Google image examples
-are not shipped. See THIRD_PARTY_NOTICES.md.
-
-Defaults: 450 W, 2×1.1 m module, 0.5 m setback, 0.1 m gap, 60% coverage cap,
-10° tilt, south-facing in northern hemisphere, 14% system loss, 0% additional shade.
-All are scenario assumptions. Roof area comes from segmented pixels × scale²;
-capacity from panel count × W/1000; energy from PVGIS specific yield × capacity.
-
-**Verification:** 14 local Python tests and DOM-state checks passed. Real HTTP
-checks exercised India inference, PVGIS calculation, area/capacity, exclusions and
-threshold changes. CI also builds Docker and exercises real inference. Public solar
-verification records are in docs/solar-public-verification.json. A separate
-[hosted public-verification run](https://github.com/jessesuniljs1-collab/rooftrace-geoai/actions/runs/43809368898)
-passed unauthenticated checks for all five samples, uploads, threshold filtering,
-zero results, corrupt-file rejection, oversized-upload HTTP 413, repository visibility,
-and the actual solar/PVGIS flow. Its JSON records are committed in docs/.
-
-Actual India example: **2 roof regions, 29 illustrative panels, 13.05 kWp,
-19,499.4 kWh/year**, PVGIS ERA5 2005–2023, default scenario. These are calculated
-screening outputs, not measured electricity. docs/solar-india-smoke.png is a recorded
-smoke-test artifact, never substituted for fresh predictions in the app.
-
-**Visual verification limitation:** browser automation stopped because it could not
-confidently identify the browser URL. The updated solar UI was not visually verified.
-API, syntax and DOM-state checks do not establish visual/mobile layout quality.
-Older building-only desktop/phone screenshots are historical evidence only.
-
-Other limits: regions may merge houses or split roofs; image scale/location must be
-correct; 2D layouts do not measure pitch, obstacles, local shade, load capacity or
-local installation requirements. PVGIS represents regional climate/terrain, not
-property-level shading. No ground-truth energy, payback, subsidy or savings claims.
-
-Uploads remain 3.5 MB, 64–1024 pixels/side. Solar allows 200 regions/5,000 panel
-illustrations. Free hosting/PVGIS can cold-start or fail; failures are explicit.
-No API secrets are required. Full-history, redacted secret scanning runs in CI.
-
-Deployment is through the authenticated Vercel CLI. Automatic GitHub deployment
-linking remains unavailable with current integration permissions. Use the stable
-production URL above, not an authenticated preview URL. Submit the form yourself.
+The app uses real building segmentation, licensed imagery and free JRC PVGIS climate data.
+The Bengaluru image has georeferenced 0.2 m/pixel sampling. Uploads support up to
+2048 pixels per side and 3.5 MB, preserving native image coordinates within that limit.
+Google Satellite is a reference link; no paid Google API or Google imagery analysis is used.

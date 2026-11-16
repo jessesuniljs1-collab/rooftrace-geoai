@@ -7,7 +7,7 @@ export function createSolarController({getSource,getResult,redraw,download,canva
   let result = null, version = 0, controller = null, selected = 'all', excluded = new Set(), calibration = null;
   function message(text) { $('solar-status').textContent=text; }
   function hideResult() {
-    result=null; $('solar-output').hidden=true; $('solar-download-csv').disabled=true; $('solar-download-report').disabled=true;
+    result=null; $('roof-popover').hidden=true; $('solar-output').hidden=true; $('solar-download-csv').disabled=true; $('solar-download-report').disabled=true;
   }
   function invalidate(text='Settings changed. Recalculate to update the panel layout and energy estimates.') {
     version++; controller?.abort(); hideResult(); $('solar-error').hidden=true; message(text); redraw();
@@ -30,7 +30,7 @@ export function createSolarController({getSource,getResult,redraw,download,canva
       coordinates=[172.6362,-43.5321];
       $('solar-location-note').textContent='WHU imagery: approximate Christchurch-area climate scenario. Exact tile coordinates are unavailable; this is not a site-specific solar assessment.';
     } else if(coordinates) {
-      $('solar-location-note').textContent=sample.id==='uttari' ? 'Georeferenced India crop. Scale: 0.3 m/pixel; coordinates come from its original UTM imagery.' : 'Sample center from source metadata; native image detail can be coarser than the requested sampling.';
+      $('solar-location-note').textContent=sample.id==='uttari' ? 'Georeferenced India crop. Scale: 0.2 m/pixel; coordinates come from its original UTM imagery.' : 'Sample center from source metadata; native image detail can be coarser than the requested sampling.';
     } else $('solar-location-note').textContent='For uploads, enter the real image scale and location. RoofTrace cannot recover metres or coordinates from an ordinary JPG/PNG.';
     $('solar-longitude').value=coordinates ? Number(coordinates[0]).toFixed(6) : '';
     $('solar-latitude').value=coordinates ? Number(coordinates[1]).toFixed(6) : '';
@@ -65,7 +65,10 @@ export function createSolarController({getSource,getResult,redraw,download,canva
       const span=document.createElement('span'); span.textContent=text; $('solar-roof-summary').append(span);
     }
     $('solar-chart-title').textContent=roof ? `Region ${roof.id} · estimated monthly AC energy` : 'All regions · estimated monthly AC energy';
-    drawChart(data.monthly_kwh); redraw();
+    drawChart(data.monthly_kwh);
+    $('roof-popover').replaceChildren(); $('roof-popover').hidden=!roof;
+    if(roof) { for(const text of [`Roof region ${roof.id}`,`${fmt(roof.footprint_m2)} m² · ${roof.panel_count} panels`,`${fmt(roof.capacity_kwp,2)} kWp capacity`,`${fmt(roof.annual_kwh,0)} kWh / year`]) {const line=document.createElement('div');line.textContent=text;$('roof-popover').append(line);} }
+    redraw();
   }
   function render() {
     $('solar-output').hidden=false;
@@ -139,9 +142,9 @@ export function createSolarController({getSource,getResult,redraw,download,canva
       }else message('Click the second end of the measured feature.');
       return;
     }
-    if(!result)return;
-    const hit=result.roofs.filter((r)=>x>=r.x_min&&x<r.x_max&&y>=r.y_min&&y<r.y_max).sort((a,b)=>a.area_pixels-b.area_pixels)[0];
-    if(hit){selected=String(hit.id);$('solar-roof').value=selected;inspect();}
+    const selectable=result?.roofs || getResult()?.regions || [];
+    const hit=selectable.filter((r)=>x>=r.x_min&&x<r.x_max&&y>=r.y_min&&y<r.y_max).sort((a,b)=>a.area_pixels-b.area_pixels)[0];
+    if(hit){selected=String(hit.id);if(result){$('solar-roof').value=selected;inspect();}else{message('Calculating selected roof…');calculate();}}
   });
   $('solar-form').addEventListener('submit',calculate);
   for(const field of fields) $(`solar-${field}`).addEventListener('input',()=>{invalidate();mapLink();});
@@ -166,6 +169,6 @@ export function createSolarController({getSource,getResult,redraw,download,canva
   }
   $('solar-download-csv').addEventListener('click',reportCSV);
   $('solar-download-report').addEventListener('click',()=>{if(result)download(new Blob([JSON.stringify(result,null,2)],{type:'application/json'}),`rooftrace-solar-${result.image_id}.json`);});
-  return {sourceChanged,overlay,clear:()=>{invalidate('Analyze an image to begin a new solar scenario.');excluded=new Set();calibration=null;},
+  return {sourceChanged,overlay,calculate,clear:()=>{invalidate('Analyze an image to begin a new solar scenario.');excluded=new Set();calibration=null;},
     detectionsChanged:()=>{invalidate('Roof detections changed. Recalculate solar potential with the active probability threshold.');excluded=new Set();}};
 }

@@ -144,8 +144,8 @@ an explicit error, never invented yield. Zero-panel cases skip weather and expor
 ## Data and licenses
 
 - **India/Uttari:** DroneMaps.in / Chetan Prasad / Open Imagery Network, **CC BY 4.0**,
-  acquired **21 July 2022**. A 153.6 m UTM-zone-43N crop is bilinearly resampled from
-  0.04832 m/pixel to 512×512 at **0.3 m/pixel**. Black survey-edge no-data remains.
+  acquired **21 July 2022**. A 102.4 m UTM-zone-43N crop is bilinearly resampled from
+  0.04832 m/pixel to 512×512 at **0.2 m/pixel**. Black survey-edge no-data remains.
 - **Three WHU test images:** `test_0002`, `test_0006`, `test_0003`, hosted release
   **CC BY 4.0**, credited to Ji, Wei & Lu (2019), Wuhan University, via giswqs.
   Not RoofTrace training data. The original WHU site was inaccessible; its historical
@@ -182,7 +182,7 @@ stdlib HTTP requests to PVGIS. PyTorch is export-only. Main routes:
 | `POST /api/regions` | Stateless probability-map filtering |
 | `POST /api/solar` | Current probability PNG, threshold, SolarSettings |
 
-Uploads: **3,500,000 bytes**, **64–1024 px/side**, **1,048,576 total pixels**. JPG/PNG
+Uploads: **3,500,000 bytes**, **64–2048 px/side**, **4,194,304 total pixels**. JPG/PNG
 only; corrupt/animated/unsupported images are rejected. Crop bigger scenes first.
 Building outputs allow 5,000 components; solar allows **200 regions/5,000 panels**.
 One analysis per process bounds resource use; contention returns a retry message.
@@ -215,22 +215,6 @@ coordinates, filtering, isolation, solar arithmetic, holes/setbacks, exclusions,
 no-weather zero capacity and explicit weather failure. CI also runs jsdom **DOM-state**
 checks for solar CSV, threshold/settings invalidation and reset, then builds Docker
 and exercises real inference. Explicit test fixtures are never production predictions.
-
-**Solar-UI visual browser verification is incomplete:** Computer Use stopped because
-it could not establish the browser URL. API/DOM tests do not prove visual/mobile
-layout. Earlier building-only screenshots are historical, not current solar evidence.
-
-Actual India smoke: **2 regions, 29 illustrative panels, 13.05 kWp, 19,499.4 kWh/year**
-at defaults, PVGIS ERA5 **2005–2023**. This is a computed scenario, not measured
-production or suitability ground truth. See local/public solar verification JSON
-and [`docs/solar-india-smoke.png`](docs/solar-india-smoke.png). Recorded evidence is
-not served as a fresh prediction in the app.
-
-Earlier six-tile WHU diagnostic: probability 0.50, min area 16, one-to-one component
-mask **IoU ≥0.50**: **87.35% precision, 87.88% recall, 1.17 mean absolute region-count
-error**, local CPU/2-thread warm median **0.639 seconds**. Demo overlap and tiny
-sample size limit interpretation. Not an India benchmark or solar validation.
-Details: [`docs/evaluation.json`](docs/evaluation.json).
 
 ## Deployment
 

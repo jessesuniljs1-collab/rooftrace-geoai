@@ -29,9 +29,9 @@ def main():
         response.raise_for_status()
         original.write_bytes(response.content)
     with rasterio.open(original) as source:
-        extent = 512 * .3 / abs(source.transform.a)
+        extent = 512 * .2 / abs(source.transform.a)
         # Fixed crop around the visible farmstead; choice made for a useful demonstration.
-        center_col, center_row = (2400, 3300) if len(sys.argv) == 1 else (int(sys.argv[1]), int(sys.argv[2]))
+        center_col, center_row = (10900, 3200) if len(sys.argv) == 1 else (int(sys.argv[1]), int(sys.argv[2]))
         window = Window(center_col - extent / 2, center_row - extent / 2, extent, extent)
         rgb = source.read([1, 2, 3], window=window, out_shape=(3, 512, 512), resampling=Resampling.bilinear)
         east, north = source.transform * (center_col, center_row)
@@ -41,14 +41,14 @@ def main():
     Image.fromarray(rgb.transpose(1, 2, 0)).save(target)
     manifest_path = ROOT / "static/samples/manifest.json"
     manifest = [item for item in json.loads(manifest_path.read_text()) if item["id"] != "uttari"]
-    sample = dict(id="uttari", title="Bengaluru farmstead", description="Open drone imagery, Uttari near Bengaluru, India",
+    sample = dict(id="uttari", title="Bengaluru rooftops", description="Open drone imagery, Uttari near Bengaluru, India",
                   image="/static/samples/uttari.png", width=512, height=512,
-                  ground_pixel_size_m=.3, center_lon_lat=[lon, lat], crop_bounds_utm43n=list(bounds),
+                  ground_pixel_size_m=.2, center_lon_lat=[lon, lat], crop_bounds_utm43n=list(bounds),
                   source="DroneMaps.in / Chetan Prasad / Open Imagery Network",
                   source_url=entry["uuid"], metadata_url=metadata_url,
                   acquisition_date=entry["acquisition_start"], license="CC BY 4.0",
                   license_url="https://creativecommons.org/licenses/by/4.0/",
-                  modifications="Cropped and bilinearly resampled from 0.04832 m/pixel UTM imagery to 0.3 m/pixel. No prediction is baked into the image.",
+                  modifications="Cropped and bilinearly resampled from 0.04832 m/pixel UTM imagery to 0.2 m/pixel. No prediction is baked into the image.",
                   sha256=hashlib.sha256(target.read_bytes()).hexdigest())
     manifest_path.write_text(json.dumps([sample, *manifest], indent=2) + "\n")
     print(json.dumps(sample, indent=2))
