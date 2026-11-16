@@ -9,6 +9,7 @@ import requests
 
 ROOT = Path(__file__).resolve().parents[1]
 PATTERNS = {
+    "Google API key": r"AIza[0-9A-Za-z_-]{35}",
     "OpenAI token": r"sk-(?:proj-|svcacct-)?[A-Za-z0-9_-]{20,}",
     "GitHub token": r"(?:gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,})",
     "Hugging Face token": r"hf_[A-Za-z0-9]{25,}",
@@ -43,7 +44,7 @@ def main():
     session = requests.Session()
     session.trust_env = False
     base = "https://rooftrace-geoai.vercel.app"
-    for path in ["/", "/static/app.js", "/static/styles.css", "/api/samples", "/health"]:
+    for path in ["/", "/static/app.js", "/static/solar.js", "/static/styles.css", "/static/solar.css", "/api/samples", "/health"]:
         response = session.get(base + path, timeout=120)
         response.raise_for_status()
         scan("deployed " + path, response.text)

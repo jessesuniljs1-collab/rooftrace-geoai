@@ -26,14 +26,23 @@ async def bound_request(request: Request, call_next):
             length = int(request.headers.get("content-length", "0"))
         except ValueError:
             return JSONResponse({"detail": "Invalid content length."}, status_code=400)
-        if length > maximum:
-            return JSONResponse({"detail": "Request exceeds the 3.5 MB upload limit."}, status_code=413)
+        oversized = length > maximum
         chunks, size = [], 0
         async for chunk in request.stream():
             size += len(chunk)
-            if size > maximum:
+            # Drain a bounded rejected body before responding. Vercel's streaming
+            # bridge can otherwise leave HTTP/1 upload clients waiting to finish
+            # writing while an early 413 is held upstream. Never retain it.
+            if size > 4_500_000:
                 return JSONResponse({"detail": "Request exceeds the 3.5 MB upload limit."}, status_code=413)
-            chunks.append(chunk)
+            if size > maximum:
+                oversized = True
+            if oversized:
+                chunks.clear()
+            else:
+                chunks.append(chunk)
+        if oversized:
+            return JSONResponse({"detail": "Request exceeds the 3.5 MB upload limit."}, status_code=413)
         request._body = b"".join(chunks)
     response = await call_next(request)
     response.headers["X-Content-Type-Options"] = "nosniff"
