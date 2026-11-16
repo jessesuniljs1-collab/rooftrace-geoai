@@ -99,37 +99,11 @@ generic COCO detector is used in the final application.**
   screenshots and result artifacts are **not redistributed**, because a source-code
   license alone does not establish rights to Google imagery.
 
-## Bengaluru satellite sample — WorldStrat
-
-- **WorldStrat**, Julien Cornebise, Ivan Oršolić and Freddie Kalaitzis (2022),
-  *Open High-Resolution Satellite Imagery: The WorldStrat Dataset*, NeurIPS 2022.
-  [Original dataset and metadata](https://zenodo.org/records/6810792).
-- Includes material **© Airbus DS 2013–2021**, **CC BY-NC 4.0**.
-  [License](https://creativecommons.org/licenses/by-nc/4.0/); the release's original
-  notice and terms are preserved in `licenses/worldstrat-LICENSE.txt`.
-  This image is distributed for the noncommercial educational hackathon demo;
-  the application's MIT source license does not relicense the image.
-- Tile `Landcover-769378`, acquired **19 January 2019**, eastern Bengaluru.
-  `bengaluru.png` is a 300×300 source-pixel crop, with a channel-wise 1st/99th
-  percentile contrast stretch, bilinearly resampled to 900×900.
-  **Native detail is about 1.5 m/pixel; 0.5 m/pixel output sampling does not add detail.**
-  Scale, boundaries and resulting areas are approximate. No predictions are baked in.
-- Preparation: `scripts/fetch_india_sample.py`, prep-only rasterio 1.4.3 and
-  remotezip 0.12.6. HTTP range reads download one 8.9 MB TIFF from the pinned
-  Hugging Face mirror instead of the 40 GB archive. Original release provenance,
-  mirror revision, crop, geographic bounds, transformations and hashes appear in
-  `static/samples/manifest.json`. Private downloads are excluded from Git.
-- This scene is separate from the external WHU model's training geography.
-  No labeled Bengaluru benchmark or measured solar-production ground truth is claimed.
-- Earlier commits used DroneMaps.in / Chetan Prasad / Open Imagery Network's
-  CC BY 4.0 Uttari image, acquired 21 July 2022. It has been removed from the
-  current app; its historical attribution remains applicable to those old commits.
-
 ## PVGIS and Google context
 
 - Solar yields come from **European Commission, Joint Research Centre, PVGIS 5.3**,
   **PVGIS-ERA5**. Responses state their actual climate period (currently 2005–2023
-  for the measured India scenario); the app displays it without inventing coverage.
+  for some supported locations); the app displays it without inventing coverage.
 - [API documentation](https://joint-research-centre.ec.europa.eu/photovoltaic-geographical-information-system-pvgis/using-pvgis-5/api-non-interactive-service_en).
 - [Usage conditions](https://joint-research-centre.ec.europa.eu/photovoltaic-geographical-information-system-pvgis/general-information/usage-conditions-data-protection_en):
   information is free, with no restrictions on use. Acknowledge PVGIS/JRC when

@@ -20,7 +20,7 @@ OpenAI API key or paid inference API is used.**
 ## Core flow
 
 1. Choose an attributed image or upload JPG/PNG. The default sample is a georeferenced
-   **eastern Bengaluru satellite neighborhood, India**.
+   **Leafy neighborhood from the WHU test release**.
 2. Select **Find rooftops** for real building inference. Inspect original/annotated
    views, estimated region counts, scores, coordinates and probability threshold.
 3. Confirm **ground scale and location**. Samples supply these where known. For uploads,
@@ -143,11 +143,6 @@ an explicit error, never invented yield. Zero-panel cases skip weather and expor
 
 ## Data and licenses
 
-- **Bengaluru satellite:** WorldStrat / Airbus DS, **CC BY-NC 4.0**, acquired
-  **19 January 2019**. Native detail approximately **1.5 m/pixel**; a 300×300-pixel
-  crop is contrast-stretched and bilinearly resampled to 900×900 at nominal
-  **0.5 m/pixel output sampling**. Resampling does not add satellite detail.
-  This sample is for noncommercial educational use; estimated areas are approximate.
 - **Three WHU test images:** `test_0002`, `test_0006`, `test_0003`, hosted release
   **CC BY 4.0**, credited to Ji, Wei & Lu (2019), Wuhan University, via giswqs.
   Not RoofTrace training data. The original WHU site was inaccessible; its historical

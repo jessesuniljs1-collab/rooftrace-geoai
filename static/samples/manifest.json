@@ -1,48 +1,19 @@
 [
   {
-    "id": "bengaluru",
-    "title": "Bengaluru rooftops",
-    "description": "Eastern Bengaluru apartment blocks · satellite image, January 2019",
-    "image": "/static/samples/bengaluru.png",
-    "width": 900,
-    "height": 900,
-    "ground_pixel_size_m": 0.5,
-    "native_ground_pixel_size_m": 1.5,
-    "center_lon_lat": [
-      77.75175879152859,
-      13.007046388966117
-    ],
-    "crop_bounds_lon_lat": [
-      77.7496844847172,
-      13.005012414822911,
-      77.75383309833997,
-      13.009080363109323
-    ],
-    "original_tile_bounds_lon_lat": [
-      77.74346156428307,
-      13.004958175512426,
-      77.75803702681104,
-      13.01925023382535
-    ],
-    "original_crop_pixels": [
-      450,
-      750,
-      750,
-      1050
-    ],
-    "original_file": "Landcover-769378_ps.tiff",
-    "source": "Airbus DS (2013–2021) / WorldStrat — Cornebise, Oršolić & Kalaitzis (2022)",
-    "source_url": "https://zenodo.org/records/6810792",
-    "archive_url": "https://huggingface.co/datasets/Khlaifiabilel/worldstrat-agrisr/resolve/704a57c6e4910918212723dca35f80cd03735792/hr_dataset.zip",
-    "archive_member": "hr_dataset/Landcover-769378/Landcover-769378_ps.tiff",
-    "metadata_url": "https://zenodo.org/records/6810792/files/metadata.csv?download=1",
-    "acquisition_date": "2019-01-19",
-    "license": "CC BY-NC 4.0",
-    "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
-    "usage_note": "Noncommercial educational demonstration. Native detail is approximately 1.5 m; scale and roof boundaries are approximate.",
-    "modifications": "RGB from pansharpened TIFF; global channel-wise 1st/99th percentile stretch; 300×300 source crop bilinearly resampled to 900×900. No generated detail, masks or predictions baked into the image.",
-    "original_sha256": "edcfef3ba622ab6b1b6f4c8fc66352e4e6cc00b37b77e988b78365c996521ca9",
-    "sha256": "73e653bd1eff1ab40938a323e185d851c994a28892e66e182e27c8568295be83"
+    "id": "neighborhood",
+    "title": "Leafy neighborhood",
+    "description": "Detached homes, shadows and varied roofs",
+    "image": "/static/samples/neighborhood.png",
+    "width": 512,
+    "height": 512,
+    "ground_pixel_size_m": 0.3,
+    "source": "WHU Building Dataset / Ji, Wei & Lu (2019), hosted by giswqs",
+    "source_url": "https://huggingface.co/datasets/giswqs/WHU-Building-Dataset/resolve/c9ccc03ef4dd004b63cf179835771ab5e074bd3d/test/Image/test_0006.png",
+    "split": "test",
+    "original_file": "test_0006.png",
+    "license": "CC BY 4.0 per the hosted dataset release; research demonstration",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "sha256": "da40fbf2b20c23d7691ded5b7eecdbe79a8de8871120ccbd00eb1cc6a0b8c599"
   },
   {
     "id": "courtyard",
@@ -59,22 +30,6 @@
     "license": "CC BY 4.0 per the hosted dataset release; research demonstration",
     "license_url": "https://creativecommons.org/licenses/by/4.0/",
     "sha256": "7d7004355ef090bab8fc7baf4d01cd9596b793385310bd69f2785eb0ed3f09ff"
-  },
-  {
-    "id": "neighborhood",
-    "title": "Leafy neighborhood",
-    "description": "Detached homes, shadows and varied roofs",
-    "image": "/static/samples/neighborhood.png",
-    "width": 512,
-    "height": 512,
-    "ground_pixel_size_m": 0.3,
-    "source": "WHU Building Dataset / Ji, Wei & Lu (2019), hosted by giswqs",
-    "source_url": "https://huggingface.co/datasets/giswqs/WHU-Building-Dataset/resolve/c9ccc03ef4dd004b63cf179835771ab5e074bd3d/test/Image/test_0006.png",
-    "split": "test",
-    "original_file": "test_0006.png",
-    "license": "CC BY 4.0 per the hosted dataset release; research demonstration",
-    "license_url": "https://creativecommons.org/licenses/by/4.0/",
-    "sha256": "da40fbf2b20c23d7691ded5b7eecdbe79a8de8871120ccbd00eb1cc6a0b8c599"
   },
   {
     "id": "farmland",

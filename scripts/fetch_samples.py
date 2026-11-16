@@ -18,11 +18,10 @@ SCENES = [
 def main():
     folder = ROOT / "static" / "samples"
     folder.mkdir(parents=True, exist_ok=True)
-    prior = folder / "manifest.json"
-    manifest = [s for s in json.loads(prior.read_text()) if s["id"] == "bengaluru"] if prior.exists() else []
+    manifest = []
     revision = "c9ccc03ef4dd004b63cf179835771ab5e074bd3d"
-    scenes = [(2, "courtyard", "Courtyard housing", "Adjoining roofs and a central courtyard"),
-              (6, "neighborhood", "Leafy neighborhood", "Detached homes, shadows and varied roofs"),
+    scenes = [(6, "neighborhood", "Leafy neighborhood", "Detached homes, shadows and varied roofs"),
+              (2, "courtyard", "Courtyard housing", "Adjoining roofs and a central courtyard"),
               (3, "farmland", "Fields & roadside", "Mostly vegetation with a roof at the image edge")]
     for number, identifier, title, detail in scenes:
         source = f"https://huggingface.co/datasets/giswqs/WHU-Building-Dataset/resolve/{revision}/test/Image/test_{number:04d}.png"

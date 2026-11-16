@@ -30,7 +30,7 @@ export function createSolarController({getSource,getResult,redraw,download,canva
       coordinates=[172.6362,-43.5321];
       $('solar-location-note').textContent='WHU imagery: approximate Christchurch-area climate scenario. Exact tile coordinates are unavailable; this is not a site-specific solar assessment.';
     } else if(coordinates) {
-      $('solar-location-note').textContent=sample.id==='bengaluru' ? 'WorldStrat satellite crop, January 2019. Nominal output scale: 0.5 m/pixel; native detail: 1.5 m. Roof boundaries and areas are approximate.' : 'Sample center from source metadata; native image detail can be coarser than the requested sampling.';
+      $('solar-location-note').textContent='Sample center from source metadata; native image detail can be coarser than the requested sampling.';
     } else $('solar-location-note').textContent='For uploads, enter the real image scale and location. RoofTrace cannot recover metres or coordinates from an ordinary JPG/PNG.';
     $('solar-longitude').value=coordinates ? Number(coordinates[0]).toFixed(6) : '';
     $('solar-latitude').value=coordinates ? Number(coordinates[1]).toFixed(6) : '';

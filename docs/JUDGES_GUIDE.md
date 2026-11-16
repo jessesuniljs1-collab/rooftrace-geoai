@@ -1,6 +1,6 @@
 # RoofTrace Solar: a one-minute demo
 
-1. Choose **Bengaluru rooftops**, then **Find rooftops**.
+1. Choose **Leafy neighborhood**, then **Find rooftops**.
 2. Wait for building detection and the automatic solar estimate.
 3. Click each highlighted roof. Point out the card showing area, panels, capacity and annual electricity.
 4. Show the monthly chart, then export solar CSV or JSON.
@@ -25,4 +25,4 @@ and results can be downloaded for review.”
 
 Do not claim guaranteed production, exact individual-house counts, measured shade,
 installation approval, financial savings, or that our team created the external model/data.
-The Bengaluru satellite crop shows eastern Bengaluru in January 2019. Native detail is approximately 1.5 m; output sampling is 0.5 m/pixel. Changing a location field does not move the image.
+WHU samples use an approximate Christchurch climate scenario because exact tile coordinates are unavailable. Changing a location field does not move the image.

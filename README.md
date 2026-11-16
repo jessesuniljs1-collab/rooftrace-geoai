@@ -88,16 +88,10 @@ deployment configuration are documented in the [technical reference](docs/TECHNI
 | Resource | Source and reuse terms |
 | --- | --- |
 | Building checkpoint | giswqs WHU UNet++ / EfficientNet-B4; Apache-2.0 |
-| Bengaluru satellite sample | WorldStrat / Airbus DS; CC BY-NC 4.0; noncommercial educational use |
 | Leafy neighborhood and two other aerial samples | WHU test release hosted by giswqs; CC BY 4.0 |
 | Phoenix satellite/aerial sample | Public-domain USGS imagery |
 | Solar yield | European Commission JRC PVGIS; acknowledge in derived reports |
 | Adapted geometry functions | AKASH2907 Project Sunroof India; Apache-2.0 |
-
-The Bengaluru scene shows apartment blocks in eastern Bengaluru on **19 January
-2019**. Native detail is approximately **1.5 m/pixel**. Bilinear output sampling at
-**0.5 m/pixel** aids processing and display without adding satellite detail.
-Estimated areas and boundaries remain approximate.
 
 The [sample manifest](static/samples/manifest.json) records exact sources, hashes,
 locations and image transformations. [Third-party notices](THIRD_PARTY_NOTICES.md)
@@ -118,8 +112,8 @@ exercise samples, uploads and live PVGIS calculations.
 - Solar layouts are **screening scenarios**, not validated installation designs.
   Roof pitch, obstacles, structural strength and nearby shade are not measured.
 - Regional climate estimates cannot guarantee a particular roof's production.
-- The Bengaluru sample has no labeled accuracy benchmark; no Bengaluru precision,
-  recall or measured solar-production accuracy is claimed.
+- WHU climate scenarios use an approximate Christchurch location; exact tile
+  coordinates are unavailable. No measured solar-production accuracy is claimed.
 - Free hosting can have cold starts. Inference and PVGIS requests require connectivity.
 
 See the [technical reference](docs/TECHNICAL_REFERENCE.md) and recorded verification

@@ -250,7 +250,7 @@ async function init() {
       const button = document.createElement('button'); button.className = 'sample'; button.dataset.id = s.id; button.setAttribute('aria-pressed', 'false');
       const image = document.createElement('img'); image.src = s.image; image.alt = ''; image.width = 53; image.height = 53;
       const text = document.createElement('span'), title = document.createElement('strong'), detail = document.createElement('small');
-      title.textContent = s.title; detail.textContent = s.id === 'phoenix' ? 'USGS · transfer challenge' : s.id === 'bengaluru' ? 'Bengaluru · satellite · 1.5 m detail' : 'WHU test · 0.3 m / px';
+      title.textContent = s.title; detail.textContent = s.id === 'phoenix' ? 'USGS · transfer challenge' : 'WHU test · 0.3 m / px';
       text.append(title, detail); button.append(image, text); button.addEventListener('click', () => selectSource(s)); $('samples').append(button);
     }
     if (samples[0]) await selectSource(samples[0]);
