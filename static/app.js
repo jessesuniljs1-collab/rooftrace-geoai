@@ -1,9 +1,12 @@
+import {createSolarController} from './solar.js';
+
 const $ = (id) => document.getElementById(id);
 const state = { source: null, result: null, view: 'original', epoch: 0, filtering: 0, busy: false, pending: false, url: null, controller: null, timer: null };
 const canvas = $('image-canvas');
 const ctx = canvas.getContext('2d');
 let samples = [];
 let filterTimer;
+let solarController;
 
 function error(message = '') { $('error').textContent = message; $('error').hidden = !message; }
 function status(message) { $('message').textContent = message; }
@@ -15,6 +18,7 @@ function controls() {
 }
 function downloads(disabled) { $('download-png').disabled = disabled; $('download-csv').disabled = disabled; }
 function clearResult() {
+  solarController?.clear();
   state.result = null;
   state.view = 'original';
   $('results').hidden = true;
@@ -62,6 +66,7 @@ function renderImage(target = canvas, annotated = state.view === 'annotated') {
         context.fillStyle = '#ecffd3'; context.fillText(text, x + 3, y + 10);
       }
     }
+    solarController?.overlay(context);
   }
 }
 function renderResults() {
@@ -112,6 +117,7 @@ async function selectSource(sample, file) {
     const image = await loadImage(url);
     if (state.epoch !== epoch) return;
     state.source = { image, file, sample, title: sample?.title || 'Uploaded image' };
+    solarController?.sourceChanged(sample);
     $('empty-view').hidden = true; canvas.hidden = false;
     $('image-title').textContent = state.source.title;
     $('dimensions').textContent = `${image.naturalWidth} × ${image.naturalHeight} px · RGB`;
@@ -181,7 +187,7 @@ async function applyThreshold() {
     const response = await fetch('/api/regions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ probability_png: state.result.probability_png, threshold }) });
     const update = await readResponse(response);
     if (state.epoch !== epoch || serial !== state.filtering) return;
-    Object.assign(state.result, update); state.pending = false; renderResults();
+    Object.assign(state.result, update); state.pending = false; solarController?.detectionsChanged(); renderResults();
     status(update.count ? 'Threshold applied. The viewer, count and downloads now use the active threshold.' : 'No regions at this threshold. A zero estimate can include missed buildings.');
   } catch (e) {
     if (state.epoch !== epoch || serial !== state.filtering) return;
@@ -215,6 +221,7 @@ for (const view of ['original', 'annotated']) $(`view-${view}`).addEventListener
 });
 $('show-ids').addEventListener('change', () => renderImage());
 $('threshold').addEventListener('input', () => {
+  solarController?.detectionsChanged();
   $('threshold-value').textContent = Number($('threshold').value).toFixed(2);
   state.pending = true; downloads(true); state.filtering++; clearTimeout(filterTimer); filterTimer = setTimeout(applyThreshold, 200);
 });
@@ -242,10 +249,11 @@ async function init() {
       const button = document.createElement('button'); button.className = 'sample'; button.dataset.id = s.id; button.setAttribute('aria-pressed', 'false');
       const image = document.createElement('img'); image.src = s.image; image.alt = ''; image.width = 53; image.height = 53;
       const text = document.createElement('span'), title = document.createElement('strong'), detail = document.createElement('small');
-      title.textContent = s.title; detail.textContent = s.id === 'phoenix' ? 'USGS · transfer challenge' : 'WHU test · 0.3 m / px';
+      title.textContent = s.title; detail.textContent = s.id === 'phoenix' ? 'USGS · transfer challenge' : s.id === 'uttari' ? 'India · open imagery · 0.3 m / px' : 'WHU test · 0.3 m / px';
       text.append(title, detail); button.append(image, text); button.addEventListener('click', () => selectSource(s)); $('samples').append(button);
     }
     if (samples[0]) await selectSource(samples[0]);
   } catch { error('Sample imagery could not load. Reload the page, or upload your own image.'); }
 }
+solarController=createSolarController({getSource:()=>state.source,getResult:()=>state.result,redraw:()=>renderImage(),download,canvas});
 init();

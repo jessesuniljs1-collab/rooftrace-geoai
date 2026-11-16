@@ -10,8 +10,9 @@ from pydantic import BaseModel, Field
 from rooftrace.inference import (INFERENCE_GATE, MAX_BYTES, MODEL_ID, ROOT,
                                 decode_image, decode_probability, encode_probability,
                                 predict, regions_from_probability)
+from rooftrace.solar import SolarSettings, analyze_solar
 
-app = FastAPI(title="RoofTrace", version="1.0.0")
+app = FastAPI(title="RoofTrace Solar", version="2.0.0")
 app.mount("/static", StaticFiles(directory=ROOT / "static"), name="static")
 SAMPLES = json.loads((ROOT / "static" / "samples" / "manifest.json").read_text())
 logger = logging.getLogger("rooftrace")
@@ -53,7 +54,7 @@ def health():
     path = ROOT / "models" / "rooftrace-whu.onnx"
     available = path.is_file()
     return JSONResponse({"status": "ok" if available else "model_missing", "model": MODEL_ID,
-                         "runtime": "ONNX Runtime CPU", "version": "1.0.0"}, status_code=200 if available else 503)
+                         "runtime": "ONNX Runtime CPU", "version": "2.0.0", "solar": "PVGIS 5.3, no API key"}, status_code=200 if available else 503)
 
 
 @app.get("/api/samples")
@@ -116,3 +117,25 @@ def filter_regions(body: RegionRequest):
         return {"regions": regions, "count": len(regions), "threshold": body.threshold}
     except ValueError as error:
         raise HTTPException(422, str(error)) from error
+
+
+class SolarRequest(RegionRequest):
+    settings: SolarSettings
+
+
+@app.post("/api/solar")
+def solar_potential(body: SolarRequest):
+    if not INFERENCE_GATE.acquire(timeout=1):
+        raise HTTPException(503, "Analysis is busy. Please try again in a moment.")
+    try:
+        probability = decode_probability(body.probability_png)
+        return analyze_solar(probability, body.threshold, body.settings)
+    except ValueError as error:
+        raise HTTPException(422, str(error)) from error
+    except RuntimeError as error:
+        raise HTTPException(503, str(error)) from error
+    except Exception as error:
+        logger.error("Solar analysis failed (%s)", type(error).__name__)
+        raise HTTPException(503, "Solar analysis could not finish. Try a smaller crop or another location.") from error
+    finally:
+        INFERENCE_GATE.release()

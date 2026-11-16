@@ -33,6 +33,11 @@ jobs:
       - run: python scripts/download_model.py
       - run: ruff check .
       - run: node --check static/app.js
+      - run: node --check static/solar.js
+      - name: Solar interface state checks
+        run: |
+          npm install --prefix /tmp/rooftrace-ui jsdom@26.1.0 --no-audit --no-fund
+          ROOFTRACE_JSDOM_PATH=/tmp/rooftrace-ui/node_modules/jsdom/lib/api.js node --experimental-vm-modules tests/ui_state.mjs
       - run: pytest -q
       - name: Build and exercise Docker entrypoint
         run: |

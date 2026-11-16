@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="RoofTrace turns overhead images into estimated building regions with transparent AI results and downloadable annotations.">
-  <meta name="theme-color" content="#123c32"><title>RoofTrace · Building intelligence</title>
+  <meta name="description" content="RoofTrace Solar estimates rooftop panel capacity and annual energy from overhead imagery, real building AI and free PVGIS climate data.">
+  <meta name="theme-color" content="#123c32"><title>RoofTrace Solar · Rooftop potential</title>
   <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/static/styles.css"><script src="/static/app.js" type="module"></script>
+  <link rel="stylesheet" href="/static/styles.css"><link rel="stylesheet" href="/static/solar.css"><script src="/static/app.js" type="module"></script>
 </head>
 <body>
 <a class="skip-link" href="#workspace">Skip to analysis</a>
 <header class="header"><a class="brand" href="/" aria-label="RoofTrace home"><svg viewBox="0 0 36 36" aria-hidden="true"><path d="M5 17 18 6l13 11M9 15v15h18V15M14 30V19h8v11"/></svg><span>RoofTrace<span class="brand-dot">.</span></span></a><div class="header-right"><span class="edition">IEEE WEEK 2026 <span>GEOAI HACKATHON</span></span><a href="https://github.com/jessesuniljs1-collab/rooftrace-geoai" target="_blank" rel="noreferrer">Source code ↗</a></div></header>
 <main>
-  <section class="intro"><div><p class="eyebrow">SATELLITE IMAGE INTELLIGENCE / PROBLEM 13</p><h1>A closer look at every roof.</h1><p class="subtitle">Turn an overhead image into building regions you can inspect, count and export.</p></div><div class="model-label"><span class="status-dot"></span> Building-specific AI<span>UNet++ · RGB aerial imagery</span></div></section>
+  <section class="intro"><div><p class="eyebrow">SATELLITE IMAGE INTELLIGENCE / PROBLEM 13</p><h1>Every rooftop. A solar possibility.</h1><p class="subtitle">Find roofs with AI. Explore panel fit, capacity and annual energy, one roof at a time.</p></div><div class="model-label"><span class="status-dot"></span> RoofTrace Solar<span>Building AI + free PVGIS climate data</span></div></section>
   <div class="workspace" id="workspace">
     <aside class="source-panel" aria-label="Image source and analysis controls">
       <div class="section-heading"><span class="step">01</span><h2>Choose your image</h2></div>
@@ -20,7 +20,7 @@
       <div id="samples" class="samples" aria-label="Sample images"><p>Loading sample imagery…</p></div>
       <p class="source-credit" id="source-credit"></p>
       <button id="analyze" class="primary" disabled>Analyze image <span aria-hidden="true">↗</span></button>
-      <p class="privacy">Uploads are processed in memory and discarded. No account required.</p>
+      <p class="privacy">Use imagery you have permission to analyze. Uploads are processed in memory and discarded.</p>
       <button id="reset" class="text-button">Reset workspace</button>
     </aside>
     <section class="analysis-panel" aria-label="Image viewer and results">
@@ -34,10 +34,47 @@
         <p class="interpretation">The model segments building pixels. Boxes enclose connected regions of at least 16 pixels. Adjoining roofs can merge, and one roof can fragment. Scores are mean pixel probabilities, not calibrated object confidence. Counts may rise or fall as the threshold changes.</p>
         <div class="export-bar"><label class="check"><input id="show-ids" type="checkbox" checked> Show region IDs</label><div><button id="download-png" class="secondary">↓ Annotated PNG</button><button id="download-csv" class="secondary">↓ Results CSV</button></div></div>
         <details class="region-details"><summary>Inspect region coordinates & scores <span id="table-count"></span></summary><p>Pixels from the top-left of the EXIF-oriented image. Bounds are [x_min, x_max) and [y_min, y_max), with exclusive right and bottom edges.</p><div class="table-scroll"><table><thead><tr><th>Region</th><th>Bounds (x₁, y₁, x₂, y₂)</th><th>Area (px)</th><th>Mean probability</th></tr></thead><tbody id="region-table"></tbody></table></div><small>Showing up to 100 regions. The CSV contains every active region. A zero result exports a header-only CSV.</small></details>
+        <section class="solar-section" aria-labelledby="solar-heading">
+          <div class="solar-heading"><div><p class="eyebrow">03 / FROM ROOFS TO ENERGY</p><h2 id="solar-heading">Explore solar potential</h2></div><span class="solar-tag">Free screening scenario</span></div>
+          <p class="solar-help">Real roof masks, physical panel dimensions and regional solar yield. Confirm the scale and location before calculating. A roof region can contain adjoining houses.</p>
+          <form id="solar-form">
+            <div class="solar-form-grid">
+              <label>Location preset<select id="solar-location"><option value="source">Use sample location</option><option value="bengaluru">Bengaluru</option><option value="chennai">Chennai</option><option value="delhi">New Delhi</option><option value="mumbai">Mumbai</option><option value="custom">Custom coordinates</option></select></label>
+              <label>Ground scale (m / pixel)<input id="solar-scale" type="number" min="0.05" max="5" step="0.0001" required placeholder="e.g. 0.300"></label>
+              <label>Latitude<input id="solar-latitude" type="number" min="-60" max="70" step="0.000001" required></label>
+              <label>Longitude<input id="solar-longitude" type="number" min="-180" max="180" step="0.000001" required></label>
+            </div>
+            <p id="solar-location-note" class="solar-small"></p>
+            <div class="scale-tools"><a id="google-satellite-link" target="_blank" rel="noreferrer">View location in Google Satellite ↗</a><button type="button" id="solar-calibrate" class="text-button">Calibrate scale with a known distance</button></div>
+            <p id="solar-calibration-note" class="solar-small" hidden>Click two points on the image, then enter their real-world distance. Use a measured feature; an assumed roof width can produce large area errors.</p>
+            <details class="solar-assumptions"><summary>Panel & roof assumptions</summary><div class="solar-form-grid">
+              <label>Module rating (W)<input id="solar-watts" type="number" min="100" max="750" step="1" value="450" required></label>
+              <label>Module length (m)<input id="solar-length" type="number" min="1" max="3" step="0.01" value="2" required></label>
+              <label>Module width (m)<input id="solar-width" type="number" min="0.5" max="2" step="0.01" value="1.1" required></label>
+              <label>Roof edge setback (m)<input id="solar-setback" type="number" min="0" max="2" step="0.1" value="0.5" required></label>
+              <label>Panel gap (m)<input id="solar-gap" type="number" min="0" max="1" step="0.05" value="0.1" required></label>
+              <label>Maximum roof coverage (%)<input id="solar-coverage" type="number" min="10" max="100" step="5" value="60" required></label>
+              <label>Module tilt (degrees)<input id="solar-tilt" type="number" min="0" max="60" step="1" value="10" required></label>
+              <label>Facing azimuth (° from north)<input id="solar-azimuth" type="number" min="0" max="360" step="1" value="180" required></label>
+              <label>System losses (%)<input id="solar-loss" type="number" min="0" max="50" step="1" value="14" required></label>
+              <label>Extra shade loss (%)<input id="solar-shade" type="number" min="0" max="80" step="5" value="0" required></label>
+            </div><p class="solar-small">These are editable scenario assumptions. Imagery does not measure obstructions, structural strength, actual roof pitch or local shading. Panel fit is a 2D flat-roof illustration; module tilt affects energy only. PVGIS includes regional terrain-horizon effects.</p></details>
+            <div class="solar-action"><button id="solar-calculate" class="primary" type="submit">Calculate solar potential <span aria-hidden="true">☀</span></button><span class="solar-small">Coordinates go to PVGIS; your image stays with RoofTrace.</span></div>
+          </form>
+          <p id="solar-status" class="solar-small" role="status" aria-live="polite"></p><p id="solar-error" class="error" role="alert" hidden></p>
+          <div id="solar-output" hidden>
+            <div class="solar-metrics"><div><span>Illustrative panels</span><strong id="solar-total-panels">0</strong></div><div><span>DC capacity</span><strong id="solar-total-capacity">0 <small>kWp</small></strong></div><div><span>Estimated annual AC energy</span><strong id="solar-total-energy">0 <small>kWh</small></strong></div></div>
+            <div class="solar-inspector"><div class="solar-selection"><label for="solar-roof">Inspect a roof region</label><select id="solar-roof"></select><label class="check"><input id="solar-exclude" type="checkbox"> Exclude this region</label></div><div id="solar-roof-summary" class="solar-roof-summary"></div></div>
+            <div class="solar-chart-heading"><h3 id="solar-chart-title">Estimated monthly AC energy</h3><label class="check"><input id="solar-show-panels" type="checkbox" checked> Show panel scenarios</label></div><div class="solar-chart" id="solar-chart" role="img" aria-label="Estimated monthly energy"></div>
+            <p id="solar-weather-credit" class="solar-small"></p>
+            <div class="solar-export"><button id="solar-download-csv" class="secondary">↓ Per-roof solar CSV</button><button id="solar-download-report" class="secondary">↓ Full solar report JSON</button></div>
+            <p class="solar-disclaimer">Screening estimates, not installation designs. Verify each roof, its scale, structural suitability, shade and local requirements with a qualified installer. Layouts are geometric suggestions, not detected existing panels.</p>
+          </div>
+        </section>
       </div>
     </section>
   </div>
-  <section class="notes" aria-label="Method and limitations"><div><p class="eyebrow">BUILT FOR A FIRST PASS</p><h2>Visible results. Clear boundaries.</h2><p>RoofTrace helps you review visible building regions. It is an experimental mapping aid, with no claim of survey accuracy.</p></div><div><h3>What the model sees</h3><p>A building-specific UNet++ / EfficientNet-B4 model trained on WHU RGB aerial images at 0.3 m per pixel. Fresh CPU inference runs on every analysis, with 512 px overlapping tiles for larger images.</p><h3>Where it can miss</h3><p>Resolution, viewing angle, trees, shadows and adjoining roofs affect results. Low-resolution imagery may produce substantial errors. PNG/JPG files carry no reliable geographic scale, so exported coordinates are pixels, not map locations.</p></div><div><h3>Sources & attribution</h3><p>Three WHU test images are provided for research demonstration under the hosted release’s CC BY 4.0 terms. The Phoenix sample uses public-domain USDA/USGS imagery and demonstrates transfer limitations.</p><p><a href="https://huggingface.co/giswqs/whu-building-unetplusplus-efficientnet-b4" target="_blank" rel="noreferrer">Model & Apache 2.0 license ↗</a><br><a href="https://huggingface.co/datasets/giswqs/WHU-Building-Dataset" target="_blank" rel="noreferrer">WHU dataset · Ji, Wei & Lu (2019) ↗</a><br><a href="https://github.com/jessesuniljs1-collab/rooftrace-geoai/blob/main/THIRD_PARTY_NOTICES.md" target="_blank" rel="noreferrer">Full provenance, evaluation & terms ↗</a></p></div></section>
+  <section class="notes" aria-label="Method and limitations"><div><p class="eyebrow">AN OPEN, FREE SOLAR WORKFLOW</p><h2>See the roof. Explore the possibility.</h2><p>Building AI identifies candidate regions. A transparent geometry model fits panel scenarios. PVGIS estimates regional energy yield. Every assumption remains visible.</p></div><div><h3>What is measured and modeled</h3><p>Roof regions come from a real UNet++ / EfficientNet-B4 model. Scale comes from sample metadata or your calibration. PVGIS ERA5 supplies regional climate-based yield; local shade and structural suitability require a site assessment.</p><h3>Google Satellite context</h3><p>The free Google Satellite link opens the selected location for visual reference. No Google tiles are downloaded or analyzed, and no Google API key or billing account is used. Upload only imagery you have rights to analyze.</p></div><div><h3>Sources & attribution</h3><p>India drone imagery: DroneMaps.in / Chetan Prasad / Open Imagery Network, CC BY 4.0. Additional scenes: WHU test split and public-domain USGS. Solar yield: European Commission JRC PVGIS. Geometry adapted from Project Sunroof India.</p><p><a href="https://github.com/AKASH2907/project_sunroof_india" target="_blank" rel="noreferrer">Project Sunroof India · Apache 2.0 ↗</a><br><a href="https://joint-research-centre.ec.europa.eu/photovoltaic-geographical-information-system-pvgis_en" target="_blank" rel="noreferrer">PVGIS solar resource ↗</a><br><a href="https://github.com/jessesuniljs1-collab/rooftrace-geoai/blob/main/THIRD_PARTY_NOTICES.md" target="_blank" rel="noreferrer">Models, imagery & full attribution ↗</a></p></div></section>
 </main>
 <footer><span class="footer-brand">RoofTrace.</span><p>404: JCT Not Found <span>Jesse Sunil · Charan SC · SM Tejashree Kashyap</span></p><span>PHASE 1 / 2026</span></footer>
 </body></html>

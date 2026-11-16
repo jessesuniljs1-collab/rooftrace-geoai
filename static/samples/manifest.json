@@ -1,5 +1,32 @@
 [
   {
+    "id": "uttari",
+    "title": "Bengaluru farmstead",
+    "description": "Open drone imagery, Uttari near Bengaluru, India",
+    "image": "/static/samples/uttari.png",
+    "width": 512,
+    "height": 512,
+    "ground_pixel_size_m": 0.3,
+    "center_lon_lat": [
+      77.48501320653745,
+      12.821717348414213
+    ],
+    "crop_bounds_utm43n": [
+      769669.2375342834,
+      1418642.19622863,
+      769822.8375342834,
+      1418795.7961447968
+    ],
+    "source": "DroneMaps.in / Chetan Prasad / Open Imagery Network",
+    "source_url": "https://oin-hotosm-temp.s3.amazonaws.com/62f3291df526a800059dc270/0/62f3291df526a800059dc271.tif",
+    "metadata_url": "https://api.openaerialmap.org/meta/62f32995f526a800059dc272",
+    "acquisition_date": "2022-07-21T16:06:14.000Z",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "modifications": "Cropped and bilinearly resampled from 0.04832 m/pixel UTM imagery to 0.3 m/pixel. No prediction is baked into the image.",
+    "sha256": "5e52d0cb62bba5f28bc13cfab10e5a062d91447f98d09728efc2c8d625fea3e7"
+  },
+  {
     "id": "courtyard",
     "title": "Courtyard housing",
     "description": "Adjoining roofs and a central courtyard",

@@ -1,252 +1,246 @@
-# RoofTrace
+# RoofTrace Solar
 
-**Building Detection from Satellite Imagery · IEEE Week 2026 GeoAI Hackathon**
+**Rooftop solar-potential screening from overhead imagery**
 
-Team **404: JCT Not Found** — Jesse Sunil (leader), Charan SC,
-SM Tejashree Kashyap. Assigned **Problem 13 — Satellite Image Intelligence**.
+IEEE Week 2026 GeoAI Hackathon · Problem 13 — Satellite Image Intelligence.
+Team **404: JCT Not Found**: Jesse Sunil (leader), Charan SC, SM Tejashree Kashyap.
 
-RoofTrace estimates visible building **regions** in overhead RGB images, draws
-their bounding boxes on the original image, and exports an annotated PNG and
-structured CSV. Every analysis runs the actual building-specific neural network.
+[Live application](https://rooftrace-geoai.vercel.app) · [Public source](https://github.com/jessesuniljs1-collab/rooftrace-geoai) · [Submission answers](docs/PHASE1_SUBMISSION.md) · [Model artifact](https://github.com/jessesuniljs1-collab/rooftrace-geoai/releases/tag/model-v1)
 
-- [Public source repository](https://github.com/jessesuniljs1-collab/rooftrace-geoai)
-- [Live public application](https://rooftrace-geoai.vercel.app)
-- Live URL and verified submission answers: [`docs/PHASE1_SUBMISSION.md`](docs/PHASE1_SUBMISSION.md)
-- [Model artifact and conversion manifest](https://github.com/jessesuniljs1-collab/rooftrace-geoai/releases/tag/model-v1)
+RoofTrace combines building-specific neural segmentation, physical image scale,
+mask-contained panel scenarios and free **European Commission JRC PVGIS** solar
+calculations. It estimates each **roof region's** panels, DC capacity and annual/monthly
+AC energy. A connected region is not guaranteed to be an individual house.
 
-## Core user flow
+The team explicitly selected the **free implementation**. Google Satellite is an
+external visual-reference link using documented, keyless Maps URLs. **Google pixels
+are not downloaded or analyzed. No Google Solar API, billing account, Google API key,
+OpenAI API key or paid inference API is used.**
 
-1. Select one of three WHU test images, explore the lower-resolution USGS transfer
-   challenge, or upload your own JPG/PNG.
-2. Select **Analyze image**. Loading feedback remains visible while fresh CPU
-   inference runs. No reference labels or saved predictions are served.
-3. Inspect the original and annotated views, estimated connected-region count,
-   dimensions, timing, region bounds and mean building probabilities.
-4. Adjust the **building probability threshold** from 0.10 to 0.90. The probability
-   map from this analysis is re-thresholded without re-running the network. The
-   count, viewer, scores and both exports update together. Downloads are disabled
-   while filtering is pending.
-5. Download an **annotated PNG** and **results CSV**, or reset to analyze another image.
+## Core flow
 
-## Run locally
+1. Choose an attributed image or upload JPG/PNG. The default sample is a georeferenced
+   **Uttari farmstead near Bengaluru, India**.
+2. Select **Analyze image** for real building inference. Inspect original/annotated
+   views, estimated region counts, scores, coordinates and probability threshold.
+3. Confirm **ground scale and location**. Samples supply these where known. For uploads,
+   enter them or calibrate scale from two points and a real measured distance.
+4. Review module dimensions/rating, edge setback, gaps, roof coverage, tilt, azimuth,
+   system losses and extra shade-loss assumptions.
+5. Select **Calculate solar potential**. The solver fits panel illustrations inside
+   predicted masks and obtains a real regional **1 kWp PVGIS** calculation.
+6. Select a roof in the ranked selector or click its box to inspect its area, panels,
+   capacity and annual/monthly energy. Exclude false-positive regions and recalculate.
+7. Download annotated PNG, building CSV, solar CSV or JSON. Threshold/settings changes
+   clear stale solar results and disable their downloads. Reset starts a new scene.
 
-Use 64-bit Python **3.12**, a CPU, approximately 1–2 GB of available RAM, and internet
-access for package installation and the initial 80 MB model download. No API key,
-GPU, paid inference service or user account is needed.
+## Local setup
+
+Use 64-bit **Python 3.12**, CPU, approximately **1–2 GB available RAM**, and internet
+for packages/model setup and PVGIS calculations. No GPU or account is required.
 
 ```sh
 git clone https://github.com/jessesuniljs1-collab/rooftrace-geoai.git
 cd rooftrace-geoai
 python -m venv .venv
-# Linux / macOS:
 source .venv/bin/activate
-# Windows PowerShell instead:
-# .venv\Scripts\Activate.ps1
+# Windows PowerShell instead: .venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
 python scripts/download_model.py
 python -m uvicorn app:app --host 127.0.0.1 --port 8000
 ```
 
-Open `http://127.0.0.1:8000`. `/health` checks application readiness and model file
-presence. The first inference verifies its SHA-256 and loads the model. If acquisition
-fails, retry the download script; it verifies and atomically installs the artifact.
+Open `http://127.0.0.1:8000`. The download script atomically installs a SHA-256-verified
+model. `/health` checks model presence; first inference verifies the hash and loads it.
 
 ```sh
 docker build -t rooftrace .
 docker run --rm -p 8000:8000 rooftrace
 ```
 
-The Docker image uses an unprivileged user and includes a health check. Optional
-settings, shown with placeholder/default values in `.env.example`:
+Docker includes model setup, an unprivileged user and health check. Optional settings:
+`ROOFTRACE_THREADS=2`; `ROOFTRACE_MODEL_PATH=/absolute/path/to/rooftrace-whu.onnx`
+with the same manifest checksum. `.env.example` has placeholders; `.env` is not
+loaded automatically. There are no application secrets.
 
-| Variable | Default | Purpose |
-| --- | --- | --- |
-| `ROOFTRACE_THREADS` | `2` | ONNX CPU intra-operation threads |
-| `ROOFTRACE_MODEL_PATH` | `models/rooftrace-whu.onnx` | Custom absolute artifact path; same manifest checksum required |
+## Building model and alignment
 
-Set variables in your shell or hosting environment. `.env` is not automatically
-loaded. There are **no application secrets** to configure.
+External [WHU checkpoint](https://huggingface.co/giswqs/whu-building-unetplusplus-efficientnet-b4),
+revision `09df9efd323bbd3d56b98b4857129eb9b5baa2d3`: **UNet++ / EfficientNet-B4**,
+background/building classes, approximately 20.8M parameters, Apache-2.0. Inputs:
+**512×512 RGB float32 / 255**, no ImageNet mean/std normalization, following the
+publisher's implementation. Nominal training scale: **0.3 m/pixel**, WHU imagery.
+The team did not train or fine-tune the model; no generic COCO detector is used.
 
-## Model and processing
-
-RoofTrace uses [giswqs's WHU building model](https://huggingface.co/giswqs/whu-building-unetplusplus-efficientnet-b4),
-revision `09df9efd323bbd3d56b98b4857129eb9b5baa2d3`: **UNet++ with an
-EfficientNet-B4 encoder**, approximately 20.8 million parameters, background and
-building semantic classes. It takes three-band RGB, 512×512, float32 values divided
-by 255. No ImageNet mean/std normalization is applied; this follows the publisher's
-training and inference implementation. Its nominal training scale is 0.3 m/pixel.
-
-The publisher reports training on WHU imagery using ImageNet encoder initialization,
-AdamW, cross-entropy loss and early stopping. These are upstream details, not a
-RoofTrace training run. **We did not fine-tune the model.**
-
-We strictly loaded the checkpoint and exported it to **ONNX opset 17**. The export
-parity check on a seeded 512×512 RGB tensor measured maximum absolute logit error
-`0.0000124` against PyTorch. Exact hashes, tensor contracts and artifact size
-(`80,031,750` bytes) are in [`models/manifest.json`](models/manifest.json).
-The export is Apache-2.0 licensed. To reproduce conversion in a separate environment:
+Production uses an **80,031,750-byte ONNX opset 17** export. Seeded conversion parity
+against PyTorch measured max absolute logit error **0.0000124**. Hashes and tensor
+contract: [`models/manifest.json`](models/manifest.json).
 
 ```sh
+# Optional, separate conversion environment:
 python -m pip install -r requirements.txt -r requirements-export.txt
 python scripts/export_model.py
 ```
 
-For a CPU-only PyTorch installation, install torch/torchvision from
-`https://download.pytorch.org/whl/cpu` first. Conversion may yield a different
-binary checksum on different exporter/library platforms; verify numerical parity
-and update the manifest and release together before deploying a new conversion.
+For CPU PyTorch, install torch/torchvision from `https://download.pytorch.org/whl/cpu`
+first. Different exporter platforms may change binary hashes; verify parity and
+update the manifest/release together before deploying another conversion.
 
-### Tiling, region meaning and coordinates
+Images are decoded, EXIF-oriented and converted to RGB; transparency composites
+onto white. No global inference resize occurs. Supported large images use **512 px
+tiles, stride 384**, reflected edge padding and overlap-averaged softmax probabilities
+in original coordinates. Components are extracted after stitching, avoiding tile
+duplicates. Maps are rounded once to 8-bit and transferred losslessly as PNG;
+probability rounding error is at most about 0.002.
 
-- JPEG/PNG decode, EXIF orientation, RGB conversion; transparent pixels composite
-  onto white. Images are never globally resized for inference.
-- Tile size **512**, stride **384**, nominal overlap **128** pixels. The last tile
-  anchors to the image edge, so overlap can be larger. Smaller images use reflected
-  padding, cropped away after prediction.
-- Two-class softmax yields building probabilities. Predictions are accumulated in
-  original pixel coordinates and averaged in overlaps **before** region extraction,
-  so tile duplicates do not inflate counts.
-- The merged map is rounded to 8-bit probabilities (`round(p × 255)`), transferred
-  losslessly as a PNG, and thresholded consistently on the server for all updates.
-  This introduces at most ~0.002 probability rounding error.
-- **8-connected components** of at least **16 pixels** become building regions.
-  No watershed or invented instance separation is used. Adjoining roofs may merge;
-  one roof can fragment. Raising the threshold can either increase or decrease
-  the count. This is an estimate of regions, not verified building instances.
-- Each score is the **mean building-pixel probability inside the component**,
-  not a calibrated object-detection confidence.
-- Boxes use original EXIF-oriented image pixels: origin at top-left, x to the right,
-  y down; **half-open bounds** `[x_min, x_max)` and `[y_min, y_max)`. The right and
-  bottom bounds can equal image width and height. Area is segmented pixel count,
-  not bounding-box area or ground area.
+**8-connected regions, minimum 16 pixels**, become candidate roofs. Adjoining houses
+may merge and one house may split. Scores are mean pixel probabilities, not calibrated
+object confidence. Threshold increases may raise or lower region counts. Coordinates:
+original EXIF-oriented pixels, origin top-left, x right/y down, **half-open bounds**
+`[x_min,x_max)` / `[y_min,y_max)`. Area means segmented pixels, not box area.
 
-CSV columns: `image_id`, `detection_id`, `class`, `x_min`, `y_min`,
-`x_max_exclusive`, `y_max_exclusive`, `area_pixels`, `mean_building_probability`,
-`active_probability_threshold`, `model_id`. Empty detections produce a valid
-header-only CSV. The annotated PNG uses the same active regions and region-ID
-setting as the viewer. Downloading PNG always includes annotations, even while
-the original comparison tab is selected.
+## Solar methodology
 
-## Data and attribution
+The requested [Project Sunroof India](https://github.com/AKASH2907/project_sunroof_india)
+commit `0c6426b9c06aa784cfee2860d3a9965c36d9222e` supplies attributed **Apache-2.0**
+Mercator-scale and rotation code adapted in `rooftrace/sunroof_geometry.py`. The
+original license is preserved. Its image examples/results are not redistributed.
+New mask packing, web interface, PVGIS integration and reports are RoofTrace work.
 
-The model was trained upstream on the **WHU Building Dataset**, not SpaceNet.
-Demo images are `test_0002`, `test_0006` and `test_0003` from the hosted WHU
-**test** split: courtyard housing, a leafy neighborhood and farmland. The hosted
-dataset release declares **CC BY 4.0**. They are distributed unchanged, renamed
-for the interface, and credited to **Ji, Wei & Lu (2019), Wuhan University**, via
-the giswqs release. This is an educational research demonstration; consult the
-original provider before commercial reuse. The original WHU site was inaccessible
-during implementation, and its terms should not be assumed identical to the mirror.
+`projected_roof_m2 = segmented_pixels × meters_per_pixel²`.
 
-The separate **Phoenix** challenge chip is public-domain **USDA/USGS The National
-Map** imagery. Its requested sampling is 0.3 m/pixel but native imagery is coarser;
-upsampling does not add roof detail. It demonstrates substantial transfer errors.
-Its acquisition year is not asserted, and it has no local reference labels.
+Scale must be verified: 10% scale error changes area by approximately 21%. Sample
+metadata supplies known scale; uploads do not. WHU's default Christchurch-area
+climate scenario is explicitly approximate because exact tile coordinates are
+unavailable. Changing location does not move the image or validate local accuracy.
 
-Exact source URLs, revisions, bounds (where available) and checksums are recorded in
-[`static/samples/manifest.json`](static/samples/manifest.json).
-`python scripts/fetch_samples.py` fetches only these four images. Neither an entire
-dataset nor any label masks are included in the app. See
-[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) for license scope and provenance.
+The mask is eroded by the edge setback. The solver searches **0°,30°,60°,90°** grid
+rotations with four offsets each. Physical panel footprints and gaps are rounded
+up to pixels, and every rasterized panel must remain inside the eroded mask,
+including around holes. A coverage cap limits panel count. This is a conservative
+**2D flat-roof illustration**, not an optimal 3D design or detected existing panels.
+Tilt affects energy, not 2D layout. Coverage is an assumption, not measured clear area.
 
-## Architecture and limits
+Defaults: **450 W**, **2×1.1 m** modules, **0.5 m** setbacks, **0.1 m** gaps,
+**60%** coverage. These are editable generic assumptions, not a manufacturer's
+product specification or a claim of local code compliance.
 
-One **FastAPI** service serves responsive HTML/CSS/JavaScript and CPU inference
-using **ONNX Runtime**, NumPy, Pillow and OpenCV. PyTorch is needed only for export.
-This change from the proposed PyTorch runtime keeps serverless dependencies and
-cold-start size manageable. The proposed fine-tuned YOLO/SpaceNet pipeline was
-replaced with an available, tested building-specific segmentation model.
+The official **PVGIS 5.3 PVcalc API**, **PVGIS-ERA5**, models crystalline silicon,
+ventilated/free mounting, entered tilt/azimuth/losses and terrain horizon. One **1 kWp**
+calculation is reused across roofs. Coordinates are rounded to **0.01°**. Returned
+database/year ranges are displayed. Cache: memory only, at most 128 scenarios,
+24 hours. No images go to PVGIS. No key, account or billing is used.
 
-- `GET /`, `GET /static/*`: UI and attributed samples.
-- `GET /health`: readiness metadata; returns 503 when the model is missing.
-- `GET /api/samples`: sample metadata.
-- `POST /api/analyze`: multipart `file` **or** `sample_id`, plus `threshold`.
-  Returns dimensions, model, timing, regions and an encoded probability map.
-- `POST /api/regions`: JSON `probability_png`, `threshold`; stateless filtering.
+`capacity_kWp = panel_count × module_watts / 1000`
 
-Uploads are restricted to **3,500,000 bytes**, **64–1024 pixels per side**, and
-**1,048,576 pixels total**. Upload request bodies are bounded before multipart
-parsing. Animated images, corrupt decodes and unsupported formats are rejected.
-Large scenes must be cropped before upload; supported larger images use tiling.
-At most 5,000 retained regions are allowed per image. One inference at a time is
-allowed per process to bound memory; simultaneous users may receive a clear busy
-response and can retry. Each request has its own image and result arrays. Uploads
-are not written to disk or logged, and no user result database exists. Probability
-maps remain in browser memory for filtering and are cleared by reset/navigation.
-Image requests are `no-store`; the host can still retain ordinary access metadata.
+`annual_AC_kWh = capacity_kWp × PVGIS_specific_yield × (1 − extra_shade_loss)`
 
-### Credential protection
+Monthly outputs use actual PVGIS monthly specific yields; rounding can differ slightly.
+Default system loss is **14%**, additional shade loss **0%** until entered. Nearby
+shade, true pitch, obstacles, structural suitability and installation requirements
+are not measured. No savings/payback/subsidy claims are made. PVGIS failure produces
+an explicit error, never invented yield. Zero-panel cases skip weather and export zeros.
 
-The application uses **no OpenAI, Vercel, Hugging Face or other API key**. Hosting
-and Git CLI authentication stays outside application source. No Vercel project
-environment variables or GitHub repository Actions secrets are configured. `.env`,
-local hosting metadata, key files and common credential files are ignored.
-The initial full-history Gitleaks audit, supplemental deployed-asset/CI-log scan,
-and private-route checks found **zero exposed credentials**. See
-[`docs/security-audit.json`](docs/security-audit.json). GitHub Actions scans the
-full history with checksum-verified Gitleaks 8.30.1 and redacts any findings.
-Pattern-based scanning cannot prove the absence of every possible secret format.
+## Data and licenses
 
-JPG/PNG lack reliable georeferencing or ground scale. No GIS coordinates, cadastral
-accuracy, building completeness, or worldwide generalization is claimed. Resolution,
-obliquity, occlusion, tree cover and shadows can materially alter results. Free
-hosting can cold-start or hit account usage limits. First inference can take longer.
+- **India/Uttari:** DroneMaps.in / Chetan Prasad / Open Imagery Network, **CC BY 4.0**,
+  acquired **21 July 2022**. A 153.6 m UTM-zone-43N crop is bilinearly resampled from
+  0.04832 m/pixel to 512×512 at **0.3 m/pixel**. Black survey-edge no-data remains.
+- **Three WHU test images:** `test_0002`, `test_0006`, `test_0003`, hosted release
+  **CC BY 4.0**, credited to Ji, Wei & Lu (2019), Wuhan University, via giswqs.
+  Not RoofTrace training data. The original WHU site was inaccessible; its historical
+  research terms may differ from the mirror. Re-check before commercial reuse.
+- **Phoenix challenge:** public-domain USDA/USGS The National Map. Requested sampling
+  0.3 m/pixel, coarser native detail, substantial transfer errors, acquisition year unverified.
+- **PVGIS:** European Commission JRC free regional solar-yield data; acknowledge it
+  in derived reports. **Google:** external visual-context link only.
 
-## Verification and measured evaluation
+Exact URLs, licenses, crop bounds, modifications, hashes: [`static/samples/manifest.json`](static/samples/manifest.json)
+and [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md). No full dataset or masks ship
+with the app. `scripts/fetch_samples.py` fetches WHU/USGS images and preserves an
+existing India entry. India reproduction needs prep-only `rasterio==1.4.3 pyproj==3.7.2`,
+then `python scripts/fetch_india_sample.py`; these are not runtime dependencies.
+
+## Exports, architecture and privacy
+
+Annotated PNG includes current regions/IDs and any active panel illustration.
+Building CSV includes image/region/class, half-open pixel bounds, segmented area,
+mean probability, active threshold and model ID; zero detections produce header-only CSV.
+Solar CSV includes per-roof area, exclusion, panels, capacity, annual/monthly energy,
+scale/location, physical assumptions, PVGIS provenance and model. JSON also includes
+panel coordinates and full scenario metadata.
+
+One **FastAPI** service serves HTML/CSS/JS, **ONNX Runtime CPU**, OpenCV geometry and
+stdlib HTTP requests to PVGIS. PyTorch is export-only. Main routes:
+
+| Route | Purpose |
+|---|---|
+| `/`, `/static/*` | Interface and samples |
+| `GET /health` | Version/model presence |
+| `GET /api/samples` | Sources and metadata |
+| `POST /api/analyze` | Multipart image or sample plus threshold |
+| `POST /api/regions` | Stateless probability-map filtering |
+| `POST /api/solar` | Current probability PNG, threshold, SolarSettings |
+
+Uploads: **3,500,000 bytes**, **64–1024 px/side**, **1,048,576 total pixels**. JPG/PNG
+only; corrupt/animated/unsupported images are rejected. Crop bigger scenes first.
+Building outputs allow 5,000 components; solar allows **200 regions/5,000 panels**.
+One analysis per process bounds resource use; contention returns a retry message.
+
+Images/results are request-local, not written to disk or logged. Browser memory
+holds current probability/scenario data until reset/navigation. API responses are
+`no-store`. PVGIS receives rounded coordinates and numeric settings, not imagery.
+The host may retain ordinary access metadata. Reports contain entered coordinates.
+
+No API secrets are required or exposed. CLI credentials remain outside source.
+Environment/key/credential files are ignored. **Gitleaks 8.30.1** scans full history
+in CI with redacted findings. The initial history/source/deployed-asset/CI audit
+found no exposed keys; see [`docs/security-audit.json`](docs/security-audit.json).
+Pattern scans cannot guarantee absence of every possible secret format.
+
+## Verification
 
 ```sh
 python -m pip install -r requirements-dev.txt
 python scripts/download_model.py
 ruff check .
 node --check static/app.js
+node --check static/solar.js
 pytest -q
-python scripts/evaluate.py  # optional: fetches six labeled test tiles into private/
+python scripts/verify_solar.py http://127.0.0.1:8000
 ```
 
-GitHub Actions runs the real checks, including acquisition/checksum verification,
-real sample/upload inference, zero detections, filtering, image validation,
-non-square tiling/alignment, original coordinates and concurrent request isolation.
-Synthetic masks and a deterministic pixel model are used **only in tests** to
-check coordinate transformations. They are never used in the public inference flow.
+**14 Python tests** cover real sample/upload inference, zeros, validation, tiling/
+coordinates, filtering, isolation, solar arithmetic, holes/setbacks, exclusions,
+no-weather zero capacity and explicit weather failure. CI also runs jsdom **DOM-state**
+checks for solar CSV, threshold/settings invalidation and reset, then builds Docker
+and exercises real inference. Explicit test fixtures are never production predictions.
 
-Our six-tile diagnostic at pixel probability **0.50**, minimum region area **16**,
-greedy one-to-one **mask IoU ≥ 0.50** region matching measured:
+**Solar-UI visual browser verification is incomplete:** Computer Use stopped because
+it could not establish the browser URL. API/DOM tests do not prove visual/mobile
+layout. Earlier building-only screenshots are historical, not current solar evidence.
 
-| Measurement | Result |
-| --- | --- |
-| Region precision | 87.35% (145 / 166) |
-| Region recall | 87.88% (145 / 165) |
-| Mean absolute region-count error per tile | 1.17 |
-| Pixel precision / recall | 94.80% / 93.35% |
-| Median warm 512×512 inference | 0.639 seconds on local CPU, 2 threads |
+Actual India smoke: **2 regions, 29 illustrative panels, 13.05 kWp, 19,499.4 kWh/year**
+at defaults, PVGIS ERA5 **2005–2023**. This is a computed scenario, not measured
+production or suitability ground truth. See local/public solar verification JSON
+and [`docs/solar-india-smoke.png`](docs/solar-india-smoke.png). Recorded evidence is
+not served as a fresh prediction in the app.
 
-The first six lexicographic WHU test tiles were selected before inference. Threshold
-0.50 is a conventional fixed default, **not validation-fitted**. No training or
-test-set threshold optimization was done. Both predictions and reference masks
-become 8-connected regions with the same area filter. Reference regions may themselves
-join buildings. The six nearby tiles are a **small diagnostic**, not a broad or
-independently audited geographic benchmark. The model publisher's full-test scores
-are not presented as RoofTrace measurements. Public sample selection overlaps this
-diagnostic, and the USGS transfer scene is not covered by these accuracy values.
-Actual per-image measurements and hardware are in [`docs/evaluation.json`](docs/evaluation.json).
+Earlier six-tile WHU diagnostic: probability 0.50, min area 16, one-to-one component
+mask **IoU ≥0.50**: **87.35% precision, 87.88% recall, 1.17 mean absolute region-count
+error**, local CPU/2-thread warm median **0.639 seconds**. Demo overlap and tiny
+sample size limit interpretation. Not an India benchmark or solar validation.
+Details: [`docs/evaluation.json`](docs/evaluation.json).
 
 ## Deployment
 
-The authenticated destination is **Vercel Hobby** (`kodiak-opr-t1`), with Python 3.12,
-the FastAPI preset and a 120-second function ceiling. `vercel.json` downloads the
-checksum-pinned model at build time. The model is included in the deployed function;
-no runtime Hub token, persistent volume or per-analysis model download is required.
-Deploy with `vercel --prod --yes --scope kodiak-opr-t1` after linking your own project.
-Keep production access public; preview deployments can have a different policy.
+Public service: **Vercel Hobby**, Python 3.12, FastAPI preset, 120-second function
+ceiling. The build downloads pinned ONNX weights; no runtime Hub token/volume.
+Free hosting/PVGIS can cold-start, rate-limit or fail. Deploy through authenticated
+CLI: `vercel deploy --prod --yes --scope kodiak-opr-t1` after project linking.
+Automatic GitHub-to-Vercel linking was unavailable with current permissions; CLI
+and CI work independently. No paid plan or add-on is required.
 
-This personal hackathon deployment uses free-tier resources. No paid plan or
-add-on is required. Deploy on another Docker-capable CPU host if free-tier limits
-are unsuitable. See the Phase 1 handoff for the actually verified URL, workflow
-status, public inference checks and remaining delivery limitations.
-
-## License
-
-Team-authored application source is **MIT**. The pretrained model and ONNX export
-are **Apache-2.0**. WHU samples use the hosted release's **CC BY 4.0** declaration;
-the USGS sample is public domain. These third-party assets and their attributions
-are explicitly outside the MIT source-code grant.
+Original application: **MIT**. Model/ONNX and adapted Sunroof geometry: **Apache-2.0**.
+OAM/hosted WHU imagery: separately attributed **CC BY 4.0**; USGS: public domain.
+Third-party assets remain outside the MIT grant.

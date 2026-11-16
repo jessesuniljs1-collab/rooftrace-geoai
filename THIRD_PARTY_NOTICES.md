@@ -80,3 +80,53 @@ DM Sans and Manrope are requested from Google Fonts under SIL Open Font License
 The proposal's SpaceNet 2 / fine-tuned YOLO approach was replaced with this
 available building-specific segmentation checkpoint. **No SpaceNet data or
 generic COCO detector is used in the final application.**
+
+## Project Sunroof India (solar extension)
+
+- Reference requested by the team: **AKASH2907/project_sunroof_india**,
+  [upstream source](https://github.com/AKASH2907/project_sunroof_india), pinned
+  commit `0c6426b9c06aa784cfee2860d3a9965c36d9222e`.
+- **Apache-2.0**. Original license preserved verbatim in
+  `licenses/project-sunroof-india-LICENSE.txt`; full Apache terms also appear in
+  `licenses/Apache-2.0.txt`.
+- `rooftrace/sunroof_geometry.py` adapts the Mercator ground-scale calculation in
+  `Google Map to Pixels/lat_long_metre_pixel.py` and the point-rotation function in
+  `Solar Panel Placement/panels_atlast.py`. Modifications are identified in its
+  header: pure functions, validation, explicit image scale/units and vectorization.
+- The new mask-contained panel grid search, PVGIS integration, per-region scenario
+  UI and energy exports are RoofTrace's application work. The upstream edge/Gabor
+  heuristics are not presented as new neural predictions. Its images, testcases,
+  screenshots and result artifacts are **not redistributed**, because a source-code
+  license alone does not establish rights to Google imagery.
+
+## OpenAerialMap India sample
+
+- Provider **DroneMaps.in**, contributor **Chetan Prasad**, **Open Imagery Network**.
+- [Original metadata](https://api.openaerialmap.org/meta/62f32995f526a800059dc272),
+  title `Uttari1571`, acquisition **21 July 2022**. Metadata declares **CC BY 4.0**.
+- [OpenAerialMap licensing](https://openaerialmap.org/legal/).
+- `uttari.png` is a fixed 153.6 m square crop near Bengaluru, resampled bilinearly
+  from 0.04832 m/pixel UTM zone 43N imagery to 512×512 at 0.3 m/pixel. It includes
+  black no-data areas at the original survey edge. No detections are baked in.
+- Exact source, crop bounds, centroid, modifications and checksum are recorded in
+  `static/samples/manifest.json`. The geographic coordinates describe this public
+  image, not the evaluator's location. This India sample is geographically separate
+  from WHU training, with no labeled accuracy benchmark available.
+- `scripts/fetch_india_sample.py` reproduces preparation with **prep-only** rasterio
+  1.4.3 and pyproj 3.7.2. The original 15 MB GeoTIFF remains in ignored `private/`.
+
+## PVGIS and Google context
+
+- Solar yields come from **European Commission, Joint Research Centre, PVGIS 5.3**,
+  **PVGIS-ERA5**. Responses state their actual climate period (currently 2005–2023
+  for the measured India scenario); the app displays it without inventing coverage.
+- [API documentation](https://joint-research-centre.ec.europa.eu/photovoltaic-geographical-information-system-pvgis/using-pvgis-5/api-non-interactive-service_en).
+- [Usage conditions](https://joint-research-centre.ec.europa.eu/photovoltaic-geographical-information-system-pvgis/general-information/usage-conditions-data-protection_en):
+  information is free, with no restrictions on use. Acknowledge PVGIS/JRC when
+  distributing derived reports. No API key or registration is used.
+- Google Satellite is accessed only through an external, documented
+  [Google Maps URL](https://developers.google.com/maps/documentation/urls/get-started).
+  There is no Maps SDK, Google tile download, Google-derived footprint tracing,
+  Google model training, Google Solar API call, Google credential or Google charge.
+  The team explicitly selected the free implementation. Google pixels are not the
+  analyzed imagery in this version.
