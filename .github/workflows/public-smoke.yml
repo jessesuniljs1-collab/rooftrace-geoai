@@ -1,0 +1,25 @@
+name: Public deployment verification
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  public-http:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install requests==2.32.5 Pillow==11.2.1
+      - name: Verify public image and export data endpoints
+        run: python scripts/verify_public.py https://rooftrace-geoai.vercel.app
+      - name: Verify real solar scenario and PVGIS response
+        run: python scripts/verify_solar.py https://rooftrace-geoai.vercel.app
+      - uses: actions/upload-artifact@v4
+        with:
+          name: public-verification-records
+          path: |
+            docs/public-verification.json
+            docs/solar-public-verification.json

@@ -30,9 +30,8 @@ async def bound_request(request: Request, call_next):
         chunks, size = [], 0
         async for chunk in request.stream():
             size += len(chunk)
-            # Drain a bounded rejected body before responding. Vercel's streaming
-            # bridge can otherwise leave HTTP/1 upload clients waiting to finish
-            # writing while an early 413 is held upstream. Never retain it.
+            # Drain a bounded rejected body so upload clients can finish writing
+            # before the 413 response. Never retain rejected content.
             if size > 4_500_000:
                 return JSONResponse({"detail": "Request exceeds the 3.5 MB upload limit."}, status_code=413)
             if size > maximum:
