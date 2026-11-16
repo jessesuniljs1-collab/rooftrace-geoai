@@ -1,30 +1,48 @@
 [
   {
-    "id": "uttari",
+    "id": "bengaluru",
     "title": "Bengaluru rooftops",
-    "description": "Open drone imagery, Uttari near Bengaluru, India",
-    "image": "/static/samples/uttari.png",
-    "width": 512,
-    "height": 512,
-    "ground_pixel_size_m": 0.2,
+    "description": "Eastern Bengaluru apartment blocks · satellite image, January 2019",
+    "image": "/static/samples/bengaluru.png",
+    "width": 900,
+    "height": 900,
+    "ground_pixel_size_m": 0.5,
+    "native_ground_pixel_size_m": 1.5,
     "center_lon_lat": [
-      77.48518857889778,
-      12.821453739749325
+      77.75175879152859,
+      13.007046388966117
     ],
-    "crop_bounds_utm43n": [
-      769714.1659067636,
-      1418638.8036717612,
-      769816.5659067637,
-      1418741.2036158724
+    "crop_bounds_lon_lat": [
+      77.7496844847172,
+      13.005012414822911,
+      77.75383309833997,
+      13.009080363109323
     ],
-    "source": "DroneMaps.in / Chetan Prasad / Open Imagery Network",
-    "source_url": "https://oin-hotosm-temp.s3.amazonaws.com/62f3291df526a800059dc270/0/62f3291df526a800059dc271.tif",
-    "metadata_url": "https://api.openaerialmap.org/meta/62f32995f526a800059dc272",
-    "acquisition_date": "2022-07-21T16:06:14.000Z",
-    "license": "CC BY 4.0",
-    "license_url": "https://creativecommons.org/licenses/by/4.0/",
-    "modifications": "Cropped and bilinearly resampled from 0.04832 m/pixel UTM imagery to 0.2 m/pixel. No prediction is baked into the image.",
-    "sha256": "af057e1eabdbfaef0a28ba680c51dda291e7e0b4b1167a565712079cf29ec1d6"
+    "original_tile_bounds_lon_lat": [
+      77.74346156428307,
+      13.004958175512426,
+      77.75803702681104,
+      13.01925023382535
+    ],
+    "original_crop_pixels": [
+      450,
+      750,
+      750,
+      1050
+    ],
+    "original_file": "Landcover-769378_ps.tiff",
+    "source": "Airbus DS (2013–2021) / WorldStrat — Cornebise, Oršolić & Kalaitzis (2022)",
+    "source_url": "https://zenodo.org/records/6810792",
+    "archive_url": "https://huggingface.co/datasets/Khlaifiabilel/worldstrat-agrisr/resolve/704a57c6e4910918212723dca35f80cd03735792/hr_dataset.zip",
+    "archive_member": "hr_dataset/Landcover-769378/Landcover-769378_ps.tiff",
+    "metadata_url": "https://zenodo.org/records/6810792/files/metadata.csv?download=1",
+    "acquisition_date": "2019-01-19",
+    "license": "CC BY-NC 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+    "usage_note": "Noncommercial educational demonstration. Native detail is approximately 1.5 m; scale and roof boundaries are approximate.",
+    "modifications": "RGB from pansharpened TIFF; global channel-wise 1st/99th percentile stretch; 300×300 source crop bilinearly resampled to 900×900. No generated detail, masks or predictions baked into the image.",
+    "original_sha256": "edcfef3ba622ab6b1b6f4c8fc66352e4e6cc00b37b77e988b78365c996521ca9",
+    "sha256": "73e653bd1eff1ab40938a323e185d851c994a28892e66e182e27c8568295be83"
   },
   {
     "id": "courtyard",

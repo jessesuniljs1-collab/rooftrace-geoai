@@ -1,57 +1,64 @@
-"""Prepare one CC-BY OAM India chip. Extra prep-only deps: rasterio, pyproj."""
+"""Prepare the WorldStrat Bengaluru sample; prep-only rasterio and remotezip.
+
+HTTP range reads retrieve one TIFF, not the 40 GB archive. No AI upscaling.
+"""
 import hashlib
 import json
-import sys
 from pathlib import Path
 
+import numpy as np
 import rasterio
-import requests
 from PIL import Image
-from pyproj import Transformer
-from rasterio.enums import Resampling
-from rasterio.windows import Window
+from remotezip import RemoteZip
 
 ROOT = Path(__file__).resolve().parents[1]
+REVISION = "704a57c6e4910918212723dca35f80cd03735792"
+ARCHIVE = f"https://huggingface.co/datasets/Khlaifiabilel/worldstrat-agrisr/resolve/{REVISION}/hr_dataset.zip"
+MEMBER = "hr_dataset/Landcover-769378/Landcover-769378_ps.tiff"
+BOUNDS = [77.74346156428307, 13.004958175512426, 77.75803702681104, 13.01925023382535]
+CROP = [450, 750, 750, 1050]  # left, top, right, bottom in original 1054px tile
 
 
 def main():
-    metadata_url = "https://api.openaerialmap.org/meta/62f32995f526a800059dc272"
-    response = requests.get(metadata_url, timeout=30)
-    response.raise_for_status()
-    entry = response.json()["results"]
-    if isinstance(entry, list):
-        entry = entry[0]
-    folder = ROOT / "private/india"
+    folder = ROOT / "private/worldstrat"
     folder.mkdir(parents=True, exist_ok=True)
-    original = folder / "uttari.tif"
+    original = folder / Path(MEMBER).name
     if not original.exists():
-        response = requests.get(entry["uuid"], timeout=120)
-        response.raise_for_status()
-        original.write_bytes(response.content)
+        with RemoteZip(ARCHIVE, initial_buffer_size=1_048_576) as archive:
+            original.write_bytes(archive.read(MEMBER))
     with rasterio.open(original) as source:
-        extent = 512 * .2 / abs(source.transform.a)
-        # Fixed crop around the visible farmstead; choice made for a useful demonstration.
-        center_col, center_row = (2800, 3900) if len(sys.argv) == 1 else (int(sys.argv[1]), int(sys.argv[2]))
-        window = Window(center_col - extent / 2, center_row - extent / 2, extent, extent)
-        rgb = source.read([1, 2, 3], window=window, out_shape=(3, 512, 512), resampling=Resampling.bilinear)
-        east, north = source.transform * (center_col, center_row)
-        lon, lat = Transformer.from_crs(source.crs, "EPSG:4326", always_xy=True).transform(east, north)
-        bounds = rasterio.windows.bounds(window, source.transform)
-    target = ROOT / "static/samples/uttari.png"
-    Image.fromarray(rgb.transpose(1, 2, 0)).save(target)
+        rgb = source.read([1, 2, 3]).transpose(1, 2, 0)
+    # 0.5 m output sampling does not create 0.5 m native detail.
+    low, high = np.percentile(rgb, [1, 99], axis=(0, 1))
+    rgb = np.clip((rgb - low) / np.maximum(high - low, 1) * 255, 0, 255).astype(np.uint8)
+    image = Image.fromarray(rgb).crop(CROP).resize((900, 900), Image.Resampling.BILINEAR)
+    target = ROOT / "static/samples/bengaluru.png"
+    image.save(target)
+    left, bottom, right, top = BOUNDS
+    x0, y0, x1, y1 = CROP
+    crop_bounds = [left + x0 / 1054 * (right - left), top - y1 / 1054 * (top - bottom),
+                   left + x1 / 1054 * (right - left), top - y0 / 1054 * (top - bottom)]
+    sample = dict(
+        id="bengaluru", title="Bengaluru rooftops",
+        description="Eastern Bengaluru apartment blocks · satellite image, January 2019",
+        image="/static/samples/bengaluru.png", width=900, height=900,
+        ground_pixel_size_m=.5, native_ground_pixel_size_m=1.5,
+        center_lon_lat=[(crop_bounds[0] + crop_bounds[2]) / 2, (crop_bounds[1] + crop_bounds[3]) / 2],
+        crop_bounds_lon_lat=crop_bounds, original_tile_bounds_lon_lat=BOUNDS,
+        original_crop_pixels=CROP, original_file=Path(MEMBER).name,
+        source="Airbus DS (2013–2021) / WorldStrat — Cornebise, Oršolić & Kalaitzis (2022)",
+        source_url="https://zenodo.org/records/6810792", archive_url=ARCHIVE, archive_member=MEMBER,
+        metadata_url="https://zenodo.org/records/6810792/files/metadata.csv?download=1",
+        acquisition_date="2019-01-19", license="CC BY-NC 4.0",
+        license_url="https://creativecommons.org/licenses/by-nc/4.0/",
+        usage_note="Noncommercial educational demonstration. Native detail is approximately 1.5 m; scale and roof boundaries are approximate.",
+        modifications="RGB from pansharpened TIFF; global channel-wise 1st/99th percentile stretch; 300×300 source crop bilinearly resampled to 900×900. No generated detail, masks or predictions baked into the image.",
+        original_sha256=hashlib.sha256(original.read_bytes()).hexdigest(),
+        sha256=hashlib.sha256(target.read_bytes()).hexdigest())
     manifest_path = ROOT / "static/samples/manifest.json"
-    manifest = [item for item in json.loads(manifest_path.read_text()) if item["id"] != "uttari"]
-    sample = dict(id="uttari", title="Bengaluru rooftops", description="Open drone imagery, Uttari near Bengaluru, India",
-                  image="/static/samples/uttari.png", width=512, height=512,
-                  ground_pixel_size_m=.2, center_lon_lat=[lon, lat], crop_bounds_utm43n=list(bounds),
-                  source="DroneMaps.in / Chetan Prasad / Open Imagery Network",
-                  source_url=entry["uuid"], metadata_url=metadata_url,
-                  acquisition_date=entry["acquisition_start"], license="CC BY 4.0",
-                  license_url="https://creativecommons.org/licenses/by/4.0/",
-                  modifications="Cropped and bilinearly resampled from 0.04832 m/pixel UTM imagery to 0.2 m/pixel. No prediction is baked into the image.",
-                  sha256=hashlib.sha256(target.read_bytes()).hexdigest())
-    manifest_path.write_text(json.dumps([sample, *manifest], indent=2) + "\n")
-    print(json.dumps(sample, indent=2))
+    others = [s for s in json.loads(manifest_path.read_text(encoding="utf-8")) if s["id"] not in {"uttari", "bengaluru"}]
+    manifest_path.write_text(json.dumps([sample, *others], indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    print("Prepared Bengaluru satellite crop; source and checksum recorded in sample manifest.")
 
 
 if __name__ == "__main__":

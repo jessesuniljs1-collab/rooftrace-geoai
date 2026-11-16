@@ -32,7 +32,7 @@ https://github.com/jessesuniljs1-collab/rooftrace-geoai
 **Brief Description of Core User Flow and Data Sources Used**
 
 Users upload overhead JPG/PNG imagery or select an attributed sample, including a
-georeferenced Bengaluru-area drone image. A pretrained WHU-specific UNet++ model
+WorldStrat satellite crop of eastern Bengaluru (Airbus DS, CC BY-NC 4.0). A pretrained WHU-specific UNet++ model
 segments candidate roof regions. Users verify scale and location, adjust panel/roof
 assumptions, then estimate per-region panel fit, capacity and annual/monthly energy
 using free JRC PVGIS solar-yield data. Interactive roof selection, exclusions,
@@ -62,6 +62,6 @@ hackathon permits updating the earlier project title.
 5. Advanced assumptions stay available; these are screening estimates requiring site review.
 
 The app uses real building segmentation, licensed imagery and free JRC PVGIS climate data.
-The Bengaluru image has georeferenced 0.2 m/pixel sampling. Uploads support up to
+The Bengaluru image has 1.5 m native detail and nominal 0.5 m/pixel output sampling. Areas are approximate; this image is for noncommercial educational use. Uploads support up to
 2048 pixels per side and 3.5 MB, preserving native image coordinates within that limit.
 Google Satellite is a reference link; no paid Google API or Google imagery analysis is used.

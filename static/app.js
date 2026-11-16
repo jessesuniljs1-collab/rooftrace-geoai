@@ -124,7 +124,7 @@ async function selectSource(sample, file) {
     $('source-credit').textContent = sample ? `${sample.source}. ${sample.license}.` : 'Your uploaded image. You are responsible for permission to use it.';
     document.querySelectorAll('.sample').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.id === sample?.id)));
     renderImage();
-    status('Image ready. Select “Analyze image” to run fresh building segmentation.');
+    status('Image ready. Select “Find rooftops” to run fresh building segmentation.');
   } catch (e) {
     if (state.epoch !== epoch) return;
     error(e.message || 'The image could not be opened. Try a valid JPG or PNG.');
@@ -250,7 +250,7 @@ async function init() {
       const button = document.createElement('button'); button.className = 'sample'; button.dataset.id = s.id; button.setAttribute('aria-pressed', 'false');
       const image = document.createElement('img'); image.src = s.image; image.alt = ''; image.width = 53; image.height = 53;
       const text = document.createElement('span'), title = document.createElement('strong'), detail = document.createElement('small');
-      title.textContent = s.title; detail.textContent = s.id === 'phoenix' ? 'USGS · transfer challenge' : s.id === 'uttari' ? 'India · open imagery · 0.3 m / px' : 'WHU test · 0.3 m / px';
+      title.textContent = s.title; detail.textContent = s.id === 'phoenix' ? 'USGS · transfer challenge' : s.id === 'bengaluru' ? 'Bengaluru · satellite · 1.5 m detail' : 'WHU test · 0.3 m / px';
       text.append(title, detail); button.append(image, text); button.addEventListener('click', () => selectSource(s)); $('samples').append(button);
     }
     if (samples[0]) await selectSource(samples[0]);

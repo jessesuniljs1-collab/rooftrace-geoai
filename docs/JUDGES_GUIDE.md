@@ -25,4 +25,4 @@ and results can be downloaded for review.”
 
 Do not claim guaranteed production, exact individual-house counts, measured shade,
 installation approval, financial savings, or that our team created the external model/data.
-The Bengaluru crop is near Uttari; changing a location field does not move the image.
+The Bengaluru satellite crop shows eastern Bengaluru in January 2019. Native detail is approximately 1.5 m; output sampling is 0.5 m/pixel. Changing a location field does not move the image.

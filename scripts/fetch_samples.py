@@ -19,7 +19,7 @@ def main():
     folder = ROOT / "static" / "samples"
     folder.mkdir(parents=True, exist_ok=True)
     prior = folder / "manifest.json"
-    manifest = [s for s in json.loads(prior.read_text()) if s["id"] == "uttari"] if prior.exists() else []
+    manifest = [s for s in json.loads(prior.read_text()) if s["id"] == "bengaluru"] if prior.exists() else []
     revision = "c9ccc03ef4dd004b63cf179835771ab5e074bd3d"
     scenes = [(2, "courtyard", "Courtyard housing", "Adjoining roofs and a central courtyard"),
               (6, "neighborhood", "Leafy neighborhood", "Detached homes, shadows and varied roofs"),

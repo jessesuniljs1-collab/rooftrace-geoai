@@ -16,10 +16,10 @@ def main():
     session.trust_env = False
     home = session.get(base, timeout=60)
     assert home.status_code == 200 and "RoofTrace Solar" in home.text
-    response = session.post(base + "/api/analyze", data={"sample_id": "uttari"}, timeout=120)
+    response = session.post(base + "/api/analyze", data={"sample_id": "bengaluru"}, timeout=120)
     response.raise_for_status()
     detection = response.json()
-    sample = next(s for s in session.get(base + '/api/samples', timeout=60).json() if s['id'] == 'uttari')
+    sample = next(s for s in session.get(base + '/api/samples', timeout=60).json() if s['id'] == 'bengaluru')
     settings = dict(meters_per_pixel=sample['ground_pixel_size_m'], latitude=sample['center_lon_lat'][1], longitude=sample['center_lon_lat'][0])
     body = dict(probability_png=detection["probability_png"], threshold=.5, settings=settings)
     started = time.perf_counter()

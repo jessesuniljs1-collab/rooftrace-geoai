@@ -1,0 +1,9 @@
+{
+  "sample_id": "neighborhood",
+  "model": "whu-unetplusplus-efficientnet-b4-09df9efd-onnx17",
+  "threshold": 0.5,
+  "count": 56,
+  "inference_seconds": 1.765,
+  "tiles": 1,
+  "scope": "Real inference illustration; no labeled accuracy or individual-house count claimed."
+}
