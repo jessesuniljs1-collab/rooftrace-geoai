@@ -31,7 +31,7 @@ def main():
     with rasterio.open(original) as source:
         extent = 512 * .2 / abs(source.transform.a)
         # Fixed crop around the visible farmstead; choice made for a useful demonstration.
-        center_col, center_row = (10900, 3200) if len(sys.argv) == 1 else (int(sys.argv[1]), int(sys.argv[2]))
+        center_col, center_row = (2800, 3900) if len(sys.argv) == 1 else (int(sys.argv[1]), int(sys.argv[2]))
         window = Window(center_col - extent / 2, center_row - extent / 2, extent, extent)
         rgb = source.read([1, 2, 3], window=window, out_shape=(3, 512, 512), resampling=Resampling.bilinear)
         east, north = source.transform * (center_col, center_row)

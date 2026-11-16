@@ -105,8 +105,8 @@ generic COCO detector is used in the final application.**
 - [Original metadata](https://api.openaerialmap.org/meta/62f32995f526a800059dc272),
   title `Uttari1571`, acquisition **21 July 2022**. Metadata declares **CC BY 4.0**.
 - [OpenAerialMap licensing](https://openaerialmap.org/legal/).
-- `uttari.png` is a fixed 153.6 m square crop near Bengaluru, resampled bilinearly
-  from 0.04832 m/pixel UTM zone 43N imagery to 512×512 at 0.3 m/pixel. It includes
+- `uttari.png` is a fixed 102.4 m square crop near Bengaluru, resampled bilinearly
+  from 0.04832 m/pixel UTM zone 43N imagery to 512×512 at 0.2 m/pixel. It includes
   black no-data areas at the original survey edge. No detections are baked in.
 - Exact source, crop bounds, centroid, modifications and checksum are recorded in
   `static/samples/manifest.json`. The geographic coordinates describe this public

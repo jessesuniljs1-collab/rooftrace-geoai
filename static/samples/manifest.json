@@ -8,14 +8,14 @@
     "height": 512,
     "ground_pixel_size_m": 0.2,
     "center_lon_lat": [
-      77.48879492317482,
-      12.82172523813986
+      77.48518857889778,
+      12.821453739749325
     ],
     "crop_bounds_utm43n": [
-      770105.5654494878,
-      1418672.6283051404,
-      770207.9654494877,
-      1418775.028249252
+      769714.1659067636,
+      1418638.8036717612,
+      769816.5659067637,
+      1418741.2036158724
     ],
     "source": "DroneMaps.in / Chetan Prasad / Open Imagery Network",
     "source_url": "https://oin-hotosm-temp.s3.amazonaws.com/62f3291df526a800059dc270/0/62f3291df526a800059dc271.tif",
@@ -24,7 +24,7 @@
     "license": "CC BY 4.0",
     "license_url": "https://creativecommons.org/licenses/by/4.0/",
     "modifications": "Cropped and bilinearly resampled from 0.04832 m/pixel UTM imagery to 0.2 m/pixel. No prediction is baked into the image.",
-    "sha256": "feb5b7cef3536eb9e1099d941adc4249964864f29dd19aa0fd94bfc34735243b"
+    "sha256": "af057e1eabdbfaef0a28ba680c51dda291e7e0b4b1167a565712079cf29ec1d6"
   },
   {
     "id": "courtyard",

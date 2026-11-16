@@ -21,13 +21,13 @@ OpenAI API key or paid inference API is used.**
 
 1. Choose an attributed image or upload JPG/PNG. The default sample is a georeferenced
    **Uttari farmstead near Bengaluru, India**.
-2. Select **Analyze image** for real building inference. Inspect original/annotated
+2. Select **Find rooftops** for real building inference. Inspect original/annotated
    views, estimated region counts, scores, coordinates and probability threshold.
 3. Confirm **ground scale and location**. Samples supply these where known. For uploads,
    enter them or calibrate scale from two points and a real measured distance.
 4. Review module dimensions/rating, edge setback, gaps, roof coverage, tilt, azimuth,
    system losses and extra shade-loss assumptions.
-5. Select **Calculate solar potential**. The solver fits panel illustrations inside
+5. Sample solar estimates run automatically after roof detection. For uploads, select **Calculate solar potential** after entering scale/location. The solver fits panel illustrations inside
    predicted masks and obtains a real regional **1 kWp PVGIS** calculation.
 6. Select a roof in the ranked selector or click its box to inspect its area, panels,
    capacity and annual/monthly energy. Exclude false-positive regions and recalculate.

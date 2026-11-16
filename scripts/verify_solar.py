@@ -19,7 +19,8 @@ def main():
     response = session.post(base + "/api/analyze", data={"sample_id": "uttari"}, timeout=120)
     response.raise_for_status()
     detection = response.json()
-    settings = dict(meters_per_pixel=.2, latitude=12.821725, longitude=77.488795)
+    sample = next(s for s in session.get(base + '/api/samples', timeout=60).json() if s['id'] == 'uttari')
+    settings = dict(meters_per_pixel=sample['ground_pixel_size_m'], latitude=sample['center_lon_lat'][1], longitude=sample['center_lon_lat'][0])
     body = dict(probability_png=detection["probability_png"], threshold=.5, settings=settings)
     started = time.perf_counter()
     response = session.post(base + "/api/solar", json=body, timeout=120)
@@ -31,7 +32,7 @@ def main():
     assert result["annual_kwh"] > 0 and len(result["monthly_kwh"]) == 12
     assert result["weather"]["source"] == "live PVGIS API calculation"
     for roof in result["roofs"]:
-        assert roof["footprint_m2"] == round(roof["area_pixels"] * .04, 2)
+        assert roof["footprint_m2"] == round(roof["area_pixels"] * settings["meters_per_pixel"] ** 2, 2)
         assert len(roof["panels"]) == roof["panel_count"]
         for panel in roof["panels"]:
             assert all(0 <= x < detection["width"] and 0 <= y < detection["height"] for x, y in panel)

@@ -1,4 +1,4 @@
-# RoofTrace Solar: Phase 1 submission
+# RoofTrace Solar: submission answers
 
 Updated **16 November 2026 (IST)** for the team's requested free solar extension.
 The original building-only version is preserved in Git history. The form is unsubmitted.
