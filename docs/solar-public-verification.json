@@ -1,5 +1,5 @@
 {
-  "verified_at_ist": "2026-11-16T10:42:41.512355+05:30",
+  "verified_at_ist": "2026-11-16T10:48:51.624052+05:30",
   "base_url": "https://rooftrace-geoai.vercel.app",
   "no_authentication_sent": true,
   "checks": [
@@ -12,7 +12,7 @@
     "region exclusion",
     "threshold recomputation"
   ],
-  "measured_solar_request_seconds": 1.97,
+  "measured_solar_request_seconds": 0.126,
   "scenario": {
     "method": "RoofTrace flat-roof screening v2",
     "threshold": 0.5,
@@ -72,7 +72,7 @@
         2005,
         2023
       ],
-      "url": "https://re.jrc.ec.europa.eu/api/v5_3/PVcalc?lat=12.82&lon=77.49&peakpower=1&loss=14&outputformat=json&pvtechchoice=crystSi&mountingplace=free&angle=10&aspect=0&raddatabase=PVGIS-ERA5&usehorizon=1",
+      "url": "https://re.jrc.ec.europa.eu/api/v5_3/PVcalc?lat=12.82&lon=77.49&peakpower=1&loss=14.0&outputformat=json&pvtechchoice=crystSi&mountingplace=free&angle=10.0&aspect=0.0&raddatabase=PVGIS-ERA5&usehorizon=1",
       "annual_kwh_per_kwp": 1494.21,
       "monthly_kwh_per_kwp": [
         147.02,
@@ -105,7 +105,7 @@
       "latitude": 12.82,
       "longitude": 77.49,
       "source": "live PVGIS API calculation",
-      "fetched_unix": 1794805960,
+      "fetched_unix": 1794806313,
       "limitation": "Regional climate and terrain horizon; nearby trees, buildings, roof structure and local shade are not measured."
     },
     "limitation": "Screening scenario, not a design or a measured roof suitability assessment. Segmentation can merge homes. Flat-roof 2D layouts do not measure pitch, obstacles, load bearing, setbacks required by local code, nearby shade or grid connection."

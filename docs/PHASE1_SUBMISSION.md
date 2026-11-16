@@ -73,7 +73,11 @@ capacity from panel count × W/1000; energy from PVGIS specific yield × capacit
 **Verification:** 14 local Python tests and DOM-state checks passed. Real HTTP
 checks exercised India inference, PVGIS calculation, area/capacity, exclusions and
 threshold changes. CI also builds Docker and exercises real inference. Public solar
-verification records are in docs/solar-public-verification.json after deployment.
+verification records are in docs/solar-public-verification.json. A separate
+[hosted public-verification run](https://github.com/jessesuniljs1-collab/rooftrace-geoai/actions/runs/43809368898)
+passed unauthenticated checks for all five samples, uploads, threshold filtering,
+zero results, corrupt-file rejection, oversized-upload HTTP 413, repository visibility,
+and the actual solar/PVGIS flow. Its JSON records are committed in docs/.
 
 Actual India example: **2 roof regions, 29 illustrative panels, 13.05 kWp,
 19,499.4 kWh/year**, PVGIS ERA5 2005–2023, default scenario. These are calculated

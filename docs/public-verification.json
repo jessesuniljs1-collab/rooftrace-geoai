@@ -1,12 +1,13 @@
 {
-  "verified_at_ist": "2026-11-16T00:45:14.046715+05:30",
+  "verified_at_ist": "2026-11-16T10:48:49.309052+05:30",
   "base_url": "https://rooftrace-geoai.vercel.app",
   "no_authentication_sent": true,
   "health": {
     "status": "ok",
     "model": "whu-unetplusplus-efficientnet-b4-09df9efd-onnx17",
     "runtime": "ONNX Runtime CPU",
-    "version": "1.0.0"
+    "version": "2.0.0",
+    "solar": "PVGIS 5.3, no API key"
   },
   "checks": [
     {
@@ -19,6 +20,10 @@
     },
     {
       "check": "samples",
+      "status": 200
+    },
+    {
+      "check": "inference: uttari",
       "status": 200
     },
     {
@@ -63,25 +68,30 @@
     }
   ],
   "sample_results": {
+    "uttari": {
+      "count": 2,
+      "model_seconds": 1.64,
+      "wall_seconds": 1.776
+    },
     "courtyard": {
       "count": 26,
-      "model_seconds": 4.404,
-      "wall_seconds": 5.355
+      "model_seconds": 1.553,
+      "wall_seconds": 1.747
     },
     "neighborhood": {
       "count": 56,
-      "model_seconds": 2.182,
-      "wall_seconds": 2.955
+      "model_seconds": 1.608,
+      "wall_seconds": 1.763
     },
     "farmland": {
       "count": 1,
-      "model_seconds": 2.186,
-      "wall_seconds": 2.725
+      "model_seconds": 1.534,
+      "wall_seconds": 1.635
     },
     "phoenix": {
       "count": 13,
-      "model_seconds": 2.079,
-      "wall_seconds": 2.577
+      "model_seconds": 1.546,
+      "wall_seconds": 1.654
     }
   },
   "filtered_threshold": 0.7,
